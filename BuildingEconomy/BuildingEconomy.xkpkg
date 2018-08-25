@@ -1,0 +1,43 @@
+!Package
+Id: be52664b-81f1-4d29-8545-750f890d6abe
+SerializedVersion: {Assets: 0.0.4}
+Meta:
+    Name: BuildingEconomy
+    Version: 1.0.0.0
+    Authors: []
+    Owners: []
+    RootNamespace: BuildingEconomy
+    Dependencies:
+        -   Name: Xenko
+            Version: 3.0.0.3
+            RootAssets: []
+LocalDependencies: []
+Profiles:
+    -   Name: Shared
+        Platform: Shared
+        InheritProfiles: []
+        AssetFolders:
+            -   Path: Assets/Shared
+            -   Path: BuildingEconomy.Game/Effects
+        ResourceFolders:
+            - Resources
+        OutputGroupDirectories: {}
+        ProjectReferences:
+            -   Id: f0e2e2b5-f03b-4a3d-91ed-2c4110974565
+                Location: BuildingEconomy.Game/BuildingEconomy.Game.csproj
+                Type: Library
+    -   Name: Windows
+        Platform: Windows
+        InheritProfiles: []
+        AssetFolders:
+            -   Path: Assets/Windows
+        ResourceFolders: []
+        OutputGroupDirectories: {}
+        ProjectReferences:
+            -   Id: d24899fc-0920-4e31-9c15-9ae4c03f44f5
+                Location: BuildingEconomy.Windows/BuildingEconomy.Windows.csproj
+                Type: Executable
+ExplicitFolders: []
+Bundles: []
+TemplateFolders: []
+RootAssets: []
