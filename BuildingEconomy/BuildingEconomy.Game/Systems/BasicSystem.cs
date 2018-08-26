@@ -1,16 +1,19 @@
-﻿using Xenko.Engine;
+﻿using Akka.Actor;
+using BuildingEconomy.Systems.Messages;
+using Xenko.Engine;
 using Xenko.Games;
 
 namespace BuildingEconomy.Systems
 {
-    internal abstract class BasicSystem : IGameSystemBase
+    internal abstract class BasicSystem : ReceiveActor, IGameSystemBase
     {
-        protected Game Game { get; }
+        protected SceneInstance Scene { get; }
         public int ReferenceCount { get; protected set; }
 
-        public BasicSystem(Game game)
+        public BasicSystem(SceneInstance scene)
         {
-            Game = game;
+            Scene = scene;
+            Receive<Update>((message) => HandleStep(message));
         }
 
         public abstract string Name { get; }
@@ -26,6 +29,6 @@ namespace BuildingEconomy.Systems
         }
 
         public abstract void Initialize();
-        public abstract void Step();
+        public abstract void HandleStep(Update message);
     }
 }

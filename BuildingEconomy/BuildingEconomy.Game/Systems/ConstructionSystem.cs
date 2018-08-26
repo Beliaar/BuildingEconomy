@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Akka.Actor;
+using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
 
@@ -10,8 +11,20 @@ namespace BuildingEconomy.Systems
 
         private readonly Dictionary<string, Construction.Building> buildings = new Dictionary<string, Construction.Building>();
 
-        public ConstructionSystem(Game game) : base(game)
+        private readonly Construction.Actor constructionActor;
+
+        public ConstructionSystem(SceneInstance scene) : base(scene)
         {
+            Receive<Construction.Messages.BuilderNeeded>(msg =>
+            {
+                scene.SelectMany(e => e.Where(c => c.Id == msg.ComponentId)).FirstOrDefault();
+            });
+            Receive<Messages.MessageToEntity>(msg => HandleMessageToEntity(msg));
+        }
+
+        protected override void PreStart()
+        {
+            base.PreStart();
         }
 
         public override void Initialize()
@@ -58,50 +71,31 @@ namespace BuildingEconomy.Systems
             }
         }
 
-        public void ConstructionStep(Components.ConstructionSite construction)
+        public void HandleMessageToEntity(Messages.MessageToEntity message)
         {
-            Construction.Building building = buildings[construction.Building];
-            Construction.Building.Stage stage = building.Stages[construction.CurrentStage - 1];
-            Entity entity = construction.Entity;
-            Components.Storage storage = entity.Components.Get<Components.Storage>();
-            if (storage is null)
+            Components.ConstructionSite constructionSite = Scene.SingleOrDefault(e => e.Id == message.EntityId)?.Get<Components.ConstructionSite>();
+            if (constructionSite is null)
             {
                 return;
             }
-            foreach (string resource in stage.NeededRessources.Keys)
+            string actorName = $"{constructionSite.Id}";
+            IActorRef actor = Context.Child(actorName);
+            if (actor == ActorRefs.Nobody)
             {
-                // Check if all resources are at or higher than the needed level.
-                if (!storage.Items.ContainsKey(resource) || storage.Items[resource] < stage.NeededRessources[resource])
-                {
-                    return;
-                }
+                Construction.Building building = buildings[constructionSite.Building];
+                actor = Context.ActorOf(Construction.Actor.Props(constructionSite, building), actorName);
             }
-
-            construction.CurrentStageProgress += stage.StepProgress;
-
-            if (construction.CurrentStageProgress >= 1.0f) // Stage is done.
-            {
-
-                foreach (string resource in stage.NeededRessources.Keys)
-                {
-                    storage.Items[resource] -= stage.NeededRessources[resource];
-                }
-                if (++construction.CurrentStage >= building.Stages.Count) // Construction is done.
-                {
-                    // TODO: Drop remaining resources, if any?
-                    entity.Remove(construction);
-                    var buildingComponent = new Components.Building
-                    {
-                        Name = building.Name,
-                    };
-                    entity.Add(buildingComponent);
-                }
-            }
+            actor.Tell(message);
         }
 
-        public override void Step()
+        public override void HandleStep(Messages.Update message)
         {
-            IEnumerable<Components.ConstructionSite> constructionSites = Game.SceneSystem.SceneInstance.SelectMany(si => si.Components.OfType<Components.ConstructionSite>());
+            IEnumerable<Components.ConstructionSite> constructionSites = Scene.SelectMany(si => si.Components.OfType<Components.ConstructionSite>());
+
+            foreach (Components.ConstructionSite constructionSite in constructionSites)
+            {
+
+            }
             // TODO: Work with the sites.
         }
     }
