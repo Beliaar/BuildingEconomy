@@ -1,4 +1,6 @@
 ﻿using Akka.Actor;
+using System.Collections.Generic;
+using System.Linq;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems.Construction
@@ -12,7 +14,7 @@ namespace BuildingEconomy.Systems.Construction
             Preparing,
             WaitingForResources,
             Constructing,
-            ConstructionDong
+            ConstructionDone
         }
 
         public Components.ConstructionSite ConstructionSite { get; }
@@ -36,8 +38,14 @@ namespace BuildingEconomy.Systems.Construction
         {
             elapsedTime = 0.0f;
             ConstructionState = State.Preparing;
+            ConstructionSite.CurrentStage = -1;
             Receive<Systems.Messages.Update>(msg => HandleUpdatePreparing(msg));
             Receive<Messages.AdvanceProgress>(msg => HandleAdvanceProgressPreparing(msg));
+        }
+
+        protected void Constructing()
+        {
+
         }
 
         protected void WaitingForResources()
@@ -53,11 +61,59 @@ namespace BuildingEconomy.Systems.Construction
                 Context.Parent.Tell(new Messages.BuilderNeeded(ConstructionSite.Id));
                 elapsedTime = 0.0;
             }
+            if (ConstructionSite.CurrentStageProgress >= 1.0f)
+            {
+                ConstructionSite.CurrentStage = 0;
+                ConstructionSite.Entity.Add(new Components.Storage());
+                Become(WaitingForResources);
+            }
+        }
+
+        protected void HandleUpdateWaitingforResources()
+        {
+
+        }
+
+        protected void SetNeededResources()
+        {
+            Components.Storage storage = ConstructionSite.Entity.Get<Components.Storage>();
+            var neededResources = new Dictionary<string, int>();
+            int nextStageIndex = ConstructionSite.CurrentStage - 1;
+            bool hasResourcesForCurrentStage = true;
+            bool hasResourcesForAllStages = false;
+            while (hasResourcesForCurrentStage && !hasResourcesForAllStages)
+            {
+                if (nextStageIndex < Building.Stages.Count)
+                {
+                    Building.Stage stage = Building.Stages[nextStageIndex - 1];
+                    foreach (KeyValuePair<string, int> resource in stage.NeededRessources)
+                    {
+                        if (!neededResources.ContainsKey(resource.Key))
+                        {
+                            neededResources[resource.Key] = 0;
+                        }
+                        if (!storage.Items.ContainsKey(resource.Key) || storage.Items[resource.Key] < (resource.Value + neededResources[resource.Key]))
+                        {
+                            hasResourcesForCurrentStage = false;
+                        }
+                        neededResources[resource.Key] += resource.Value;
+                    }
+                    nextStageIndex++;
+                }
+                else
+                {
+                    hasResourcesForAllStages = true;
+                }
+            }
+            storage.RequestedItems.Clear();
+            storage.RequestedItems.Concat(neededResources).ToDictionary(p => p.Key, p => p.Value);
+
         }
 
         public void HandleAdvanceProgressPreparing(Messages.AdvanceProgress message)
         {
-
+            // This will probably be things like leveling the ground and such later. Everything that needs to be done before the actual building starts and that does not need items.
+            ConstructionSite.CurrentStageProgress += 0.25f;
         }
 
         /// <summary>

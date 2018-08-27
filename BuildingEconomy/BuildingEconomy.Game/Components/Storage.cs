@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Components
@@ -11,11 +11,11 @@ namespace BuildingEconomy.Components
         /// <summary>
         /// The list of stored items.
         /// </summary>
-        public Dictionary<string, int> Items = new Dictionary<string, int>();
+        public ConcurrentDictionary<string, int> Items = new ConcurrentDictionary<string, int>();
 
         /// <summary>
         /// Items requested to be moved to this storage.
         /// </summary>
-        public Dictionary<string, int> RequestedItems = new Dictionary<string, int>();
+        public ConcurrentDictionary<string, int> RequestedItems = new ConcurrentDictionary<string, int>();
     }
 }
