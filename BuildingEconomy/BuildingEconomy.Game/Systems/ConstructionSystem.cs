@@ -19,7 +19,7 @@ namespace BuildingEconomy.Systems
             {
                 scene.SelectMany(e => e.Where(c => c.Id == msg.ComponentId)).FirstOrDefault();
             });
-            Receive<Messages.MessageToEntity>(msg => HandleMessageToEntity(msg));
+            Receive<Construction.Messages.MessageToConstructionSite>(msg => HandleMessageToConstructionSite(msg));
         }
 
         protected override void PreStart()
@@ -71,13 +71,23 @@ namespace BuildingEconomy.Systems
             }
         }
 
-        public void HandleMessageToEntity(Messages.MessageToEntity message)
+        public void HandleMessageToConstructionSite(Construction.Messages.MessageToConstructionSite message)
         {
             Components.ConstructionSite constructionSite = Scene.SingleOrDefault(e => e.Id == message.EntityId)?.Get<Components.ConstructionSite>();
             if (constructionSite is null)
             {
                 return;
             }
+            ForwardMessageToSite(message, constructionSite);
+        }
+
+        /// <summary>
+        /// Returns the actor for that construction site
+        /// </summary>
+        /// <param name="constructionSite"></param>
+        /// <returns></returns>
+        private IActorRef GetOrCreateActor(Components.ConstructionSite constructionSite)
+        {
             string actorName = $"{constructionSite.Id}";
             IActorRef actor = Context.Child(actorName);
             if (actor == ActorRefs.Nobody)
@@ -85,7 +95,20 @@ namespace BuildingEconomy.Systems
                 Construction.Building building = buildings[constructionSite.Building];
                 actor = Context.ActorOf(Construction.Actor.Props(constructionSite, building), actorName);
             }
-            actor.Tell(message);
+
+            return actor;
+        }
+
+        public void HandleConstructionFinished(Construction.Messages.ConstructionFinished message)
+        {
+            Entity entity = Scene.SingleOrDefault(e => e.Id == message.EntityId);
+            entity.RemoveAll<Components.ConstructionSite>();
+            var building = new Components.Building
+            {
+                Name = message.Building
+            };
+            entity.Add(building);
+            // TODO: Add building specific components.
         }
 
         public override void HandleStep(Messages.Update message)
@@ -94,9 +117,13 @@ namespace BuildingEconomy.Systems
 
             foreach (Components.ConstructionSite constructionSite in constructionSites)
             {
-
+                ForwardMessageToSite(message, constructionSite);
             }
-            // TODO: Work with the sites.
+        }
+
+        private void ForwardMessageToSite(object message, Components.ConstructionSite constructionSite)
+        {
+            GetOrCreateActor(constructionSite).Tell(message);
         }
     }
 }
