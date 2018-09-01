@@ -2,7 +2,10 @@
 
 namespace BuildingEconomy.Systems.Construction.Messages
 {
-    public class MessageToConstructionSite : Systems.Messages.MessageToEntity
+    /// <summary>
+    /// Base for messages intended for construction sites.
+    /// </summary>
+    public abstract class MessageToConstructionSite : Systems.Messages.MessageToEntityComponent<Components.ConstructionSite>
     {
         public MessageToConstructionSite(Guid entityId) : base(entityId)
         {

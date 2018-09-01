@@ -2,7 +2,10 @@
 
 namespace BuildingEconomy.Systems.Construction.Messages
 {
-    internal class ConstructionFinished
+    /// <summary>
+    /// Message that the site has finished its construction.
+    /// </summary>
+    public class ConstructionFinished
     {
         public Guid EntityId { get; }
         public string Building { get; }

@@ -5,15 +5,15 @@ using Xenko.Games;
 
 namespace BuildingEconomy.Systems
 {
-    internal abstract class BasicSystem : ReceiveActor, IGameSystemBase
+    public abstract class BasicSystem<T> : IGameSystemBase where T : BasicSystem<T>
     {
-        protected SceneInstance Scene { get; }
+        public EntityManager EntityManager { get; }
         public int ReferenceCount { get; protected set; }
+        public abstract IActorRef Actor { get; }
 
-        public BasicSystem(SceneInstance scene)
+        public BasicSystem(EntityManager entityManager)
         {
-            Scene = scene;
-            Receive<Update>((message) => HandleStep(message));
+            EntityManager = entityManager;
         }
 
         public abstract string Name { get; }
@@ -29,6 +29,5 @@ namespace BuildingEconomy.Systems
         }
 
         public abstract void Initialize();
-        public abstract void HandleStep(Update message);
     }
 }

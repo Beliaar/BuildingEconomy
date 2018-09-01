@@ -3,13 +3,13 @@
 namespace BuildingEconomy.Systems.Construction.Messages
 {
     /// <summary>
-    /// Message that the site needs builders.
+    /// Message that the site is waiting for resources.
     /// </summary>
-    public class BuilderNeeded
+    public class WaitingForResources
     {
         public Guid ComponentId { get; }
 
-        public BuilderNeeded(Guid componentId)
+        public WaitingForResources(Guid componentId)
         {
             ComponentId = componentId;
         }

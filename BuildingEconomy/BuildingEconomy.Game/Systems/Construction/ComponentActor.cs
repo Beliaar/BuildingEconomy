@@ -1,28 +1,25 @@
 ﻿using Akka.Actor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
+using Xenko.Games;
 
 namespace BuildingEconomy.Systems.Construction
 {
-    internal class Actor : ReceiveActor
+
+    /// <summary>
+    /// Akka Actor for handling messages from and to construction sites.
+    /// </summary>
+    public class ComponentActor : ReceiveActor
     {
         public static double SecondsBetweenUpdate = 5.0;
 
-        public enum State
-        {
-            Preparing,
-            WaitingForResources,
-            Constructing,
-            ConstructionDone
-        }
-
         public Components.ConstructionSite ConstructionSite { get; }
         public Building Building { get; }
-        public State ConstructionState { get; protected set; }
         protected double elapsedTime;
 
-        public Actor(Components.ConstructionSite constructionSite, Building building)
+        public ComponentActor(Components.ConstructionSite constructionSite, Building building)
         {
             ConstructionSite = constructionSite;
             Building = building;
@@ -31,13 +28,12 @@ namespace BuildingEconomy.Systems.Construction
 
         public static Props Props(Components.ConstructionSite constructionSite, Building building)
         {
-            return Akka.Actor.Props.Create(() => new Actor(constructionSite, building));
+            return Akka.Actor.Props.Create(() => new ComponentActor(constructionSite, building));
         }
 
         protected void Preparing()
         {
             elapsedTime = 0.0f;
-            ConstructionState = State.Preparing;
             ConstructionSite.CurrentStage = -1;
             Receive<Systems.Messages.Update>(msg => HandleUpdatePreparing(msg));
             Receive<Messages.AdvanceProgress>(msg => HandleAdvanceProgressPreparing(msg));
@@ -50,17 +46,24 @@ namespace BuildingEconomy.Systems.Construction
 
         protected void WaitingForResources()
         {
-            ConstructionState = State.WaitingForResources;
+            elapsedTime = 0.0f;
+            Receive<Systems.Messages.Update>(msg => HandleUpdateWaitingforResources(msg));
+        }
+
+        protected void DoIfTimePassed(GameTime gameTime, Action action)
+        {
+            elapsedTime += gameTime.Elapsed.TotalSeconds;
+            if (elapsedTime >= SecondsBetweenUpdate)
+            {
+                action();
+                elapsedTime = 0.0;
+            }
         }
 
         protected void HandleUpdatePreparing(Systems.Messages.Update message)
         {
-            elapsedTime += message.UpdateTime.Elapsed.TotalSeconds;
-            if (elapsedTime > SecondsBetweenUpdate)
-            {
-                Context.Parent.Tell(new Messages.BuilderNeeded(ConstructionSite.Id));
-                elapsedTime = 0.0;
-            }
+            IActorRef sender = Sender;
+            DoIfTimePassed(message.UpdateTime, () => sender.Tell(new Messages.BuilderNeeded(ConstructionSite.Id)));
             if (ConstructionSite.CurrentStageProgress >= 1.0f)
             {
                 ConstructionSite.CurrentStage = 0;
@@ -69,9 +72,10 @@ namespace BuildingEconomy.Systems.Construction
             }
         }
 
-        protected void HandleUpdateWaitingforResources()
+        protected void HandleUpdateWaitingforResources(Systems.Messages.Update message)
         {
-
+            IActorRef sender = Sender;
+            DoIfTimePassed(message.UpdateTime, () => sender.Tell(new Messages.WaitingForResources(ConstructionSite.Id)));
         }
 
         protected void SetNeededResources()

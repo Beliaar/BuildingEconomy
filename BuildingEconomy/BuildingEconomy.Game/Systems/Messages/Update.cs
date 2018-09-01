@@ -2,7 +2,7 @@
 
 namespace BuildingEconomy.Systems.Messages
 {
-    internal class Update
+    public class Update
     {
         public GameTime UpdateTime { get; }
 

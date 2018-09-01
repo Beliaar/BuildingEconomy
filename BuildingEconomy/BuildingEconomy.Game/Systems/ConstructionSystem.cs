@@ -5,26 +5,17 @@ using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
 {
-    internal class ConstructionSystem : BasicSystem
+    public class ConstructionSystem : BasicSystem<ConstructionSystem>
     {
         public override string Name => "Construction";
+        public override IActorRef Actor => actor;
 
         private readonly Dictionary<string, Construction.Building> buildings = new Dictionary<string, Construction.Building>();
+        private readonly IActorRef actor;
 
-        private readonly Construction.Actor constructionActor;
-
-        public ConstructionSystem(SceneInstance scene) : base(scene)
+        public ConstructionSystem(EntityManager entityManager, IActorRefFactory actorRefFactory) : base(entityManager)
         {
-            Receive<Construction.Messages.BuilderNeeded>(msg =>
-            {
-                scene.SelectMany(e => e.Where(c => c.Id == msg.ComponentId)).FirstOrDefault();
-            });
-            Receive<Construction.Messages.MessageToConstructionSite>(msg => HandleMessageToConstructionSite(msg));
-        }
-
-        protected override void PreStart()
-        {
-            base.PreStart();
+            actor = actorRefFactory.ActorOf(Construction.SystemActor.Props(this), "ConstructionSystem");
         }
 
         public override void Initialize()
@@ -71,59 +62,13 @@ namespace BuildingEconomy.Systems
             }
         }
 
-        public void HandleMessageToConstructionSite(Construction.Messages.MessageToConstructionSite message)
+        public Construction.Building GetBuilding(string name)
         {
-            Components.ConstructionSite constructionSite = Scene.SingleOrDefault(e => e.Id == message.EntityId)?.Get<Components.ConstructionSite>();
-            if (constructionSite is null)
+            if (buildings.ContainsKey(name))
             {
-                return;
+                return buildings[name];
             }
-            ForwardMessageToSite(message, constructionSite);
-        }
-
-        /// <summary>
-        /// Returns the actor for that construction site
-        /// </summary>
-        /// <param name="constructionSite"></param>
-        /// <returns></returns>
-        private IActorRef GetOrCreateActor(Components.ConstructionSite constructionSite)
-        {
-            string actorName = $"{constructionSite.Id}";
-            IActorRef actor = Context.Child(actorName);
-            if (actor == ActorRefs.Nobody)
-            {
-                Construction.Building building = buildings[constructionSite.Building];
-                actor = Context.ActorOf(Construction.Actor.Props(constructionSite, building), actorName);
-            }
-
-            return actor;
-        }
-
-        public void HandleConstructionFinished(Construction.Messages.ConstructionFinished message)
-        {
-            Entity entity = Scene.SingleOrDefault(e => e.Id == message.EntityId);
-            entity.RemoveAll<Components.ConstructionSite>();
-            var building = new Components.Building
-            {
-                Name = message.Building
-            };
-            entity.Add(building);
-            // TODO: Add building specific components.
-        }
-
-        public override void HandleStep(Messages.Update message)
-        {
-            IEnumerable<Components.ConstructionSite> constructionSites = Scene.SelectMany(si => si.Components.OfType<Components.ConstructionSite>());
-
-            foreach (Components.ConstructionSite constructionSite in constructionSites)
-            {
-                ForwardMessageToSite(message, constructionSite);
-            }
-        }
-
-        private void ForwardMessageToSite(object message, Components.ConstructionSite constructionSite)
-        {
-            GetOrCreateActor(constructionSite).Tell(message);
+            return null;
         }
     }
 }
