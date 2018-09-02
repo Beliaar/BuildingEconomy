@@ -10,10 +10,10 @@ namespace BuildingEconomy.Systems.Construction
         public class Stage
         {
             public Dictionary<string, int> NeededRessources = new Dictionary<string, int>();
-            public float StepProgress;
+            public int Steps;
         }
 
-        public string Name;
-        public List<Stage> Stages = new List<Stage>();
+        public string Name { get; set; }
+        public List<Stage> Stages { get; } = new List<Stage>();
     }
 }

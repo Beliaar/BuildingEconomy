@@ -34,7 +34,7 @@ namespace BuildingEconomy.Systems.Construction
         protected void Preparing()
         {
             elapsedTime = 0.0f;
-            ConstructionSite.CurrentStage = -1;
+            ConstructionSite.CurrentStage = 0;
             Receive<Systems.Messages.Update>(msg => HandleUpdatePreparing(msg));
             Receive<Messages.AdvanceProgress>(msg => HandleAdvanceProgressPreparing(msg));
         }
@@ -62,20 +62,36 @@ namespace BuildingEconomy.Systems.Construction
 
         protected void HandleUpdatePreparing(Systems.Messages.Update message)
         {
-            IActorRef sender = Sender;
-            DoIfTimePassed(message.UpdateTime, () => sender.Tell(new Messages.BuilderNeeded(ConstructionSite.Id)));
             if (ConstructionSite.CurrentStageProgress >= 1.0f)
             {
-                ConstructionSite.CurrentStage = 0;
+                ConstructionSite.CurrentStage = 1;
+                ConstructionSite.CurrentStageProgress = 0f;
                 ConstructionSite.Entity.Add(new Components.Storage());
                 Become(WaitingForResources);
+                Self.Forward(message);
+            }
+            else
+            {
+                IActorRef sender = Sender;
+                DoIfTimePassed(message.UpdateTime, () => sender.Tell(new Messages.BuilderNeeded(ConstructionSite.Id)));
             }
         }
 
         protected void HandleUpdateWaitingforResources(Systems.Messages.Update message)
         {
             IActorRef sender = Sender;
-            DoIfTimePassed(message.UpdateTime, () => sender.Tell(new Messages.WaitingForResources(ConstructionSite.Id)));
+            if (HasNeededResourcesForStage(Building.Stages[ConstructionSite.CurrentStage - 1]))
+            {
+                Become(Constructing);
+            }
+            else
+            {
+                DoIfTimePassed(message.UpdateTime, () =>
+                {
+                    SetNeededResources();
+                    sender.Tell(new Messages.WaitingForResources(ConstructionSite.Id));
+                });
+            }
         }
 
         protected void SetNeededResources()
@@ -89,7 +105,7 @@ namespace BuildingEconomy.Systems.Construction
             {
                 if (nextStageIndex < Building.Stages.Count)
                 {
-                    Building.Stage stage = Building.Stages[nextStageIndex - 1];
+                    Building.Stage stage = Building.Stages[nextStageIndex];
                     foreach (KeyValuePair<string, int> resource in stage.NeededRessources)
                     {
                         if (!neededResources.ContainsKey(resource.Key))
@@ -110,7 +126,10 @@ namespace BuildingEconomy.Systems.Construction
                 }
             }
             storage.RequestedItems.Clear();
-            storage.RequestedItems.Concat(neededResources).ToDictionary(p => p.Key, p => p.Value);
+            foreach (KeyValuePair<string, int> pair in neededResources)
+            {
+                storage.RequestedItems[pair.Key] = pair.Value;
+            }
 
         }
 
@@ -126,22 +145,23 @@ namespace BuildingEconomy.Systems.Construction
         /// <param name="construction"></param>
         public void HandleAdvanceProgress(Messages.AdvanceProgress message)
         {
-            Entity entity = ConstructionSite.Entity;
             Building.Stage stage = Building.Stages[ConstructionSite.CurrentStage - 1];
+            ConstructionSite.CurrentStageProgress += 1.0f / stage.Steps;
+        }
+
+        private bool HasNeededResourcesForStage(Building.Stage stage)
+        {
+            Entity entity = ConstructionSite.Entity;
             Components.Storage storage = entity.Components.Get<Components.Storage>();
-            if (storage is null)
-            {
-                return;
-            }
             foreach (string resource in stage.NeededRessources.Keys)
             {
                 // Check if all resources are at or higher than the needed level.
                 if (!storage.Items.ContainsKey(resource) || storage.Items[resource] < stage.NeededRessources[resource])
                 {
-                    return;
+                    return false;
                 }
             }
-            ConstructionSite.CurrentStageProgress += stage.StepProgress;
+            return true;
         }
     }
 }

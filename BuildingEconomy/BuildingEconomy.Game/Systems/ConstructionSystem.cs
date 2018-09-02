@@ -31,7 +31,7 @@ namespace BuildingEconomy.Systems
                 {
                     {"Wood", 4 },
                 },
-                StepProgress = 0.25f,
+                Steps = 4,
             });
             warehouse.Stages.Add(new Construction.Building.Stage
             {
@@ -40,7 +40,7 @@ namespace BuildingEconomy.Systems
                     {"Wood", 2 },
                     {"Stone", 4 }
                 },
-                StepProgress = 0.15f,
+                Steps = 6,
             });
             warehouse.Stages.Add(new Construction.Building.Stage
             {
@@ -49,7 +49,7 @@ namespace BuildingEconomy.Systems
                     {"Wood", 2 },
                     {"Stone", 3 }
                 },
-                StepProgress = 0.2f,
+                Steps = 5,
             });
             AddBuilding(warehouse);
         }

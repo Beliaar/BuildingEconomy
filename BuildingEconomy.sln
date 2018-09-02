@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingEconomy.Windows", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingEconomy.Game", "BuildingEconomy\BuildingEconomy.Game\BuildingEconomy.Game.csproj", "{F0E2E2B5-F03B-4A3D-91ED-2C4110974565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingEconomy.Test", "BuildingEconomy.Test\BuildingEconomy.Test.csproj", "{D5FB4715-8EB6-421B-B567-284606DC2926}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingEconomy.Test", "BuildingEconomy.Test\BuildingEconomy.Test.csproj", "{D5FB4715-8EB6-421B-B567-284606DC2926}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

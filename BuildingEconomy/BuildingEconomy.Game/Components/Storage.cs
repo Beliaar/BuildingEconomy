@@ -11,11 +11,11 @@ namespace BuildingEconomy.Components
         /// <summary>
         /// The list of stored items.
         /// </summary>
-        public ConcurrentDictionary<string, int> Items = new ConcurrentDictionary<string, int>();
+        public ConcurrentDictionary<string, int> Items { get; } = new ConcurrentDictionary<string, int>();
 
         /// <summary>
         /// Items requested to be moved to this storage.
         /// </summary>
-        public ConcurrentDictionary<string, int> RequestedItems = new ConcurrentDictionary<string, int>();
+        public ConcurrentDictionary<string, int> RequestedItems { get; } = new ConcurrentDictionary<string, int>();
     }
 }

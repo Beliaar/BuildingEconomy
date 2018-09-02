@@ -1,13 +1,10 @@
 ﻿using Akka.Actor;
 using Akka.TestKit.Xunit2;
+using BuildingEconomy.Systems;
+using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xenko.Engine;
 using Xunit;
-using Moq;
-using BuildingEconomy.Systems;
-using Moq.Protected;
 
 namespace BuildingEconomy.Test
 {
@@ -62,7 +59,7 @@ namespace BuildingEconomy.Test
             var mockServiceRegistry = new Mock<Xenko.Core.IServiceRegistry>();
             var sceneInstance = new SceneInstance(mockServiceRegistry.Object, scene);
             var system = new Mock<TestSystem>(sceneInstance);
-            var systemActor = Sys.ActorOf(Props.Create(() => new TestSystemActor(system.Object)));
+            IActorRef systemActor = Sys.ActorOf(Props.Create(() => new TestSystemActor(system.Object)));
             system.SetupGet(m => m.Actor).Returns(systemActor);
 
             var component = new TestComponent();
