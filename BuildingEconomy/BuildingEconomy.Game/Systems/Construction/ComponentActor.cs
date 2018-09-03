@@ -41,7 +41,20 @@ namespace BuildingEconomy.Systems.Construction
 
         protected void Constructing()
         {
+            elapsedTime = 0.0f;
+            Receive<Systems.Messages.Update>(msg => HandleUpdateConstructing(msg));
+            Receive<Messages.AdvanceProgress>(msg => HandleAdvanceProgressConstructing(msg));
+        }
 
+        protected void ConstructionFinished()
+        {
+            Receive<Systems.Messages.Update>(msg =>
+            {
+                DoIfTimePassed(msg.UpdateTime, () =>
+                {
+                    Sender.Tell(new Messages.ConstructionFinished(ConstructionSite.Entity.Id, Building.Name));
+                });
+            });
         }
 
         protected void WaitingForResources()
@@ -83,6 +96,7 @@ namespace BuildingEconomy.Systems.Construction
             if (HasNeededResourcesForStage(Building.Stages[ConstructionSite.CurrentStage - 1]))
             {
                 Become(Constructing);
+                Self.Forward(message);
             }
             else
             {
@@ -143,10 +157,39 @@ namespace BuildingEconomy.Systems.Construction
         /// Add a step to the progress of the construction site. Checks if the site is allowed to progress first.
         /// </summary>
         /// <param name="construction"></param>
-        public void HandleAdvanceProgress(Messages.AdvanceProgress message)
+        public void HandleAdvanceProgressConstructing(Messages.AdvanceProgress message)
         {
             Building.Stage stage = Building.Stages[ConstructionSite.CurrentStage - 1];
             ConstructionSite.CurrentStageProgress += 1.0f / stage.Steps;
+        }
+
+        public void HandleUpdateConstructing(Systems.Messages.Update message)
+        {
+            if (ConstructionSite.CurrentStageProgress >= 1.0f)
+            {
+                if (ConstructionSite.CurrentStage < Building.Stages.Count)
+                {
+                    ++ConstructionSite.CurrentStage;
+                    ConstructionSite.CurrentStageProgress = 0.0f;
+                    Become(WaitingForResources);
+                    Self.Forward(message);
+                }
+                else
+                {
+                    Become(ConstructionFinished);
+                    Self.Forward(message);
+                }
+            }
+            else
+            {
+                IActorRef sender = Sender;
+                DoIfTimePassed(message.UpdateTime, () =>
+                {
+                    SetNeededResources();
+                    sender.Tell(new Messages.BuilderNeeded(ConstructionSite.Id));
+                });
+            }
+
         }
 
         private bool HasNeededResourcesForStage(Building.Stage stage)
