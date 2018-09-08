@@ -21,7 +21,6 @@ namespace BuildingEconomy.Systems.Construction
             });
             Receive<Messages.ConstructionFinished>(msg => HandleConstructionFinished(msg));
             Receive<Messages.WaitingForResources>(msg => Context.Parent.Tell(msg));
-            ReceiveAny(msg => HandleAny(msg));
         }
 
         public static Props Props(ConstructionSystem system)
@@ -30,18 +29,13 @@ namespace BuildingEconomy.Systems.Construction
         }
 
 
-        public void HandleAny(object message)
-        {
-            Context.Parent.Tell(message);
-        }
-
         public override void HandleStep(Systems.Messages.Update message)
         {
             IEnumerable<Components.ConstructionSite> constructionSites = System.EntityManager.SelectMany(e => e.Components.OfType<Components.ConstructionSite>());
 
             foreach (Components.ConstructionSite constructionSite in constructionSites)
             {
-                ForwardMessageToComponent(message, constructionSite);
+                ForwardMessageToComponent(message, constructionSite, Self);
             }
         }
 

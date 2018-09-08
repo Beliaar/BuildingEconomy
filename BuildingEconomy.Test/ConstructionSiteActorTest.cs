@@ -80,12 +80,12 @@ namespace BuildingEconomy.Test
             componentActor.Tell(new Update(new Xenko.Games.GameTime()));
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
-            componentActor.Tell(new AdvanceProgress(testEntity.Id));
+            componentActor.Tell(new AdvanceProgress());
             ExpectNoMsg(100);
             Assert.Equal(0.25f, siteComponent.CurrentStageProgress);
-            componentActor.Tell(new AdvanceProgress(testEntity.Id));
-            componentActor.Tell(new AdvanceProgress(testEntity.Id));
-            componentActor.Tell(new AdvanceProgress(testEntity.Id));
+            componentActor.Tell(new AdvanceProgress());
+            componentActor.Tell(new AdvanceProgress());
+            componentActor.Tell(new AdvanceProgress());
             ExpectNoMsg(100);
             Assert.Equal(1.0f, siteComponent.CurrentStageProgress);
         }
@@ -139,13 +139,13 @@ namespace BuildingEconomy.Test
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
-            componentActor.Tell(new AdvanceProgress(testEntity.Id));
+            componentActor.Tell(new AdvanceProgress());
             ExpectNoMsg(100);
             Assert.NotEqual(0f, siteComponent.CurrentStageProgress);
             Assert.True(siteComponent.CurrentStageProgress < 1f);
             foreach (int _ in Enumerable.Range(0, curStage.Steps))
             {
-                componentActor.Tell(new AdvanceProgress(testEntity.Id));
+                componentActor.Tell(new AdvanceProgress());
             }
             ExpectNoMsg(100);
             Assert.True(siteComponent.CurrentStageProgress >= 1.0f);
@@ -211,7 +211,7 @@ namespace BuildingEconomy.Test
             ExpectMsg<BuilderNeeded>();
             foreach (int _ in Enumerable.Range(0, curStage.Steps))
             {
-                componentActor.Tell(new AdvanceProgress(testEntity.Id));
+                componentActor.Tell(new AdvanceProgress());
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<WaitingForResources>();
@@ -226,7 +226,7 @@ namespace BuildingEconomy.Test
             ExpectMsg<BuilderNeeded>();
             foreach (int _ in Enumerable.Range(0, curStage.Steps))
             {
-                componentActor.Tell(new AdvanceProgress(testEntity.Id));
+                componentActor.Tell(new AdvanceProgress());
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<ConstructionFinished>();
@@ -300,14 +300,14 @@ namespace BuildingEconomy.Test
             ExpectMsg<BuilderNeeded>();
             foreach (int _ in Enumerable.Range(0, curStage.Steps))
             {
-                componentActor.Tell(new AdvanceProgress(testEntity.Id));
+                componentActor.Tell(new AdvanceProgress());
             }           
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
             curStage = building.Stages[siteComponent.CurrentStage - 1];
             foreach (int _ in Enumerable.Range(0, curStage.Steps))
             {
-                componentActor.Tell(new AdvanceProgress(testEntity.Id));
+                componentActor.Tell(new AdvanceProgress());
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<ConstructionFinished>();

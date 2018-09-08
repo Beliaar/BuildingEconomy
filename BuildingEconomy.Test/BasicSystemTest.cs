@@ -16,7 +16,7 @@ namespace BuildingEconomy.Test
 
         public class TestMessage : Systems.Messages.MessageToEntityComponent<TestComponent>
         {
-            public TestMessage(Guid entityId) : base(entityId)
+            public TestMessage(Guid entityId, object message) : base(entityId, message)
             {
             }
         }
@@ -70,7 +70,7 @@ namespace BuildingEconomy.Test
 
             scene.Entities.Add(entity);
 
-            system.Object.Actor.Tell(new TestMessage(entity.Id));
+            system.Object.Actor.Tell(new TestMessage(entity.Id, null));
             ExpectMsg<string>();
         }
     }

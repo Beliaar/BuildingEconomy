@@ -20,38 +20,6 @@ namespace BuildingEconomy.Systems
 
         public override void Initialize()
         {
-            var warehouse = new Construction.Building()
-            {
-                Name = "Warehouse"
-            };
-
-            warehouse.Stages.Add(new Construction.Building.Stage
-            {
-                NeededRessources = new Dictionary<string, int>
-                {
-                    {"Wood", 4 },
-                },
-                Steps = 4,
-            });
-            warehouse.Stages.Add(new Construction.Building.Stage
-            {
-                NeededRessources = new Dictionary<string, int>
-                {
-                    {"Wood", 2 },
-                    {"Stone", 4 }
-                },
-                Steps = 6,
-            });
-            warehouse.Stages.Add(new Construction.Building.Stage
-            {
-                NeededRessources = new Dictionary<string, int>
-                {
-                    {"Wood", 2 },
-                    {"Stone", 3 }
-                },
-                Steps = 5,
-            });
-            AddBuilding(warehouse);
         }
 
         public void AddBuilding(Construction.Building building)
