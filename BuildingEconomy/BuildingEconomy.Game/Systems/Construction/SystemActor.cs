@@ -16,7 +16,7 @@ namespace BuildingEconomy.Systems.Construction
             base.Default();
             Receive<Messages.BuilderNeeded>(msg =>
             {
-                System.EntityManager.SelectMany(e => e.Where(c => c.Id == msg.ComponentId)).FirstOrDefault();
+                // TODO: Set orders for builders.
                 Context.Parent.Tell(msg);
             });
             Receive<Messages.ConstructionFinished>(msg => HandleConstructionFinished(msg));

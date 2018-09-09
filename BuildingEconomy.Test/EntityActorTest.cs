@@ -13,26 +13,16 @@ using Xunit;
 
 namespace BuildingEconomy.Test
 {
-
-
-    class TestActor : ReceiveActor
-    {
-        public TestActor(Guid guid)
-        {
-            Receive<string>((msg) => Sender.Tell(guid));
-            Receive<Update>((msg) => Sender.Tell(guid));
-        }
-    }
-
-    [AllowMultipleComponents]
-    public class TestComponent : EntityComponent
-    {
-    }
-
-
     public class EntityActorTest : TestKit
     {
-
+        class EntityTestActor : ReceiveActor
+        {
+            public EntityTestActor(Guid guid)
+            {
+                Receive<string>((msg) => Sender.Tell(guid));
+                Receive<Update>((msg) => Sender.Tell(guid));
+            }
+        }
 
         [Fact]
         public void TestMessageToEntityComponentFirstOfType()
@@ -41,7 +31,7 @@ namespace BuildingEconomy.Test
             var mockComponentActorFactory = new Mock<IComponentActorFactory>();
             mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
             {
-                return factory.ActorOf(Props.Create(() => new TestActor(component.Id)), $"{component.Id}");
+                return factory.ActorOf(Props.Create(() => new EntityTestActor(component.Id)), $"{component.Id}");
             }
             );
 
@@ -80,7 +70,7 @@ namespace BuildingEconomy.Test
             var mockComponentActorFactory = new Mock<IComponentActorFactory>();
             mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
                 {
-                    return factory.ActorOf(Props.Create(() => new TestActor(component.Id)), $"{component.Id}");
+                    return factory.ActorOf(Props.Create(() => new EntityTestActor(component.Id)), $"{component.Id}");
                 }
             );
 

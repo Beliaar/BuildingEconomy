@@ -14,43 +14,37 @@ namespace BuildingEconomy.Test
 {
     public class ConstructionSystemActorTest : TestKit
     {
-
-        private class ConstructionTestComponentActor : ConstructionSiteActor
+        [Fact]
+        public void TestBuilderNeeded()
         {
-            public ConstructionTestComponentActor(ConstructionSite constructionSite, Systems.Construction.Building building) : base(constructionSite, building)
-            {
-            }
-
-            public void TestBuilderNeeded()
-            {
-                Become(BuilderNeeded);
-            }
-
-            void TestWaitingForResources()
-            {
-                Become(WaitingForResources);
-            }
-
-
-            public void BuilderNeeded()
-            {
-                Receive<Systems.Messages.Update>((msg) => Context.Parent.Tell(new Systems.Construction.Messages.BuilderNeeded(Guid.Empty)));
-            }
-
-            public new void WaitingForResources()
-            {
-                Receive<Systems.Messages.Update>((msg) => Context.Parent.Tell(new Systems.Construction.Messages.WaitingForResources(Guid.Empty)));
-            }
-
-            public new void ConstructionFinished()
-            {
-                Receive<Systems.Messages.Update>((msg) => Context.Parent.Tell(new Systems.Construction.Messages.ConstructionFinished(Guid.Empty, "Test")));
-            }
+            var scene = new Scene();
+            var mockServiceRegistry = new Mock<Xenko.Core.IServiceRegistry>();
+            var sceneInstance = new SceneInstance(mockServiceRegistry.Object, scene);
+            var actorRefFactoryMock = new Mock<IActorRefFactory>();
+            actorRefFactoryMock.Setup(f => f.ActorOf(It.IsAny<Props>(), It.IsAny<string>())).Returns((Props props, string name) => ActorOfAsTestActorRef<SystemActor>(props, TestActor, name));
+            var system = new Systems.ConstructionSystem(sceneInstance, actorRefFactoryMock.Object);
+            var guid = new Guid();
+            system.Actor.Tell(new Systems.Construction.Messages.BuilderNeeded(guid));
+            ExpectMsg<Systems.Construction.Messages.BuilderNeeded>(bn => bn.ComponentId == guid);
 
         }
 
         [Fact]
-        public void TestHandleUpdate()
+        public void TestWaitingForResources()
+        {
+            var scene = new Scene();
+            var mockServiceRegistry = new Mock<Xenko.Core.IServiceRegistry>();
+            var sceneInstance = new SceneInstance(mockServiceRegistry.Object, scene);
+            var actorRefFactoryMock = new Mock<IActorRefFactory>();
+            actorRefFactoryMock.Setup(f => f.ActorOf(It.IsAny<Props>(), It.IsAny<string>())).Returns((Props props, string name) => ActorOfAsTestActorRef<SystemActor>(props, TestActor, name));
+            var system = new Systems.ConstructionSystem(sceneInstance, actorRefFactoryMock.Object);
+            var guid = new Guid();
+            system.Actor.Tell(new Systems.Construction.Messages.WaitingForResources(guid));
+            ExpectMsg<Systems.Construction.Messages.WaitingForResources>(bn => bn.ComponentId == guid);
+        }
+
+        [Fact]
+        public void TestMessagesFromComponent()
         {
             var actorRefFactoryMock = new Mock<IActorRefFactory>();
             actorRefFactoryMock.Setup(f => f.ActorOf(It.IsAny<Props>(), It.IsAny<string>())).Returns((Props props, string name) => ActorOfAsTestActorRef<SystemActor>(props, TestActor, name));
@@ -87,12 +81,14 @@ namespace BuildingEconomy.Test
 
             scene.Entities.Add(entity);
 
-            system.Actor.Tell(new Systems.Messages.Update(new GameTime(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5))));
-            ExpectMsg<Systems.Construction.Messages.BuilderNeeded>();
-            component.CurrentStage = 1;
-            system.Actor.Tell(new Systems.Messages.Update(new GameTime(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5))));
-            ExpectMsg<Systems.Construction.Messages.WaitingForResources>();
-
+            Assert.NotNull(entity.Get<ConstructionSite>());
+            Assert.Null(entity.Get<Components.Building>());
+            system.Actor.Tell(new Systems.Construction.Messages.ConstructionFinished(entity.Id, component.Building));
+            ExpectNoMsg(500);
+            Assert.Null(entity.Get<ConstructionSite>());
+            Components.Building entBuilding = entity.Get<Components.Building>();
+            Assert.NotNull(building);
+            Assert.Equal(component.Building, entBuilding.Name);
         }
     }
 }

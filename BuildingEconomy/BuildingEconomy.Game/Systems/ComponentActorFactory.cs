@@ -8,7 +8,7 @@ using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
 {
-    abstract class ComponentActorFactory<T> : Interfaces.IComponentActorFactory where T : EntityComponent
+    public abstract class ComponentActorFactory<T> : Interfaces.IComponentActorFactory where T : EntityComponent
     {
         public IActorRef GetOrCreateActorForComponent(T component, IActorContext context)
         {
@@ -25,7 +25,7 @@ namespace BuildingEconomy.Systems
             var asT = component as T;
             if (asT is null)
             {
-                throw new ArgumentException($"Wrong component type. Expected {nameof(T)} got {component.GetType().Name}");
+                throw new ArgumentException($"Wrong component type. Expected {typeof(T).FullName} got {component.GetType().Name}");
             }
             return GetOrCreateActorForComponent(asT, context);
         }
