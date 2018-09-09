@@ -35,14 +35,6 @@ namespace BuildingEconomy.Test
             public TestSystemActor(TestSystem system) : base(system)
             {
             }
-
-            protected override IActorRef GetOrCreateActor<C>(C component)
-            {
-                return GetOrCreateActor(
-                    component,
-                    Props.Create(() => new ComponentActor())
-                    );
-            }
         }
 
         public abstract class TestSystem : Systems.BasicSystem<TestSystem>
@@ -50,28 +42,6 @@ namespace BuildingEconomy.Test
             public TestSystem(EntityManager entityManager) : base(entityManager)
             {
             }
-        }
-
-        [Fact]
-        public void TestForwardToEntityComponent()
-        {
-            var scene = new Scene();
-            var mockServiceRegistry = new Mock<Xenko.Core.IServiceRegistry>();
-            var sceneInstance = new SceneInstance(mockServiceRegistry.Object, scene);
-            var system = new Mock<TestSystem>(sceneInstance);
-            IActorRef systemActor = Sys.ActorOf(Props.Create(() => new TestSystemActor(system.Object)));
-            system.SetupGet(m => m.Actor).Returns(systemActor);
-
-            var component = new TestComponent();
-            var entity = new Entity
-            {
-                component,
-            };
-
-            scene.Entities.Add(entity);
-
-            system.Object.Actor.Tell(new TestMessage(entity.Id, null));
-            ExpectMsg<string>();
         }
     }
 }

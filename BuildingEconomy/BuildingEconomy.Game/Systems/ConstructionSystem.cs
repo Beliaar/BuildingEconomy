@@ -1,11 +1,13 @@
 ﻿using Akka.Actor;
+using BuildingEconomy.Systems.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
 {
-    public class ConstructionSystem : BasicSystem<ConstructionSystem>
+    public class ConstructionSystem : BasicSystem<ConstructionSystem>, Construction.Interfaces.IBuildingManager
     {
         public override string Name => "Construction";
         public override IActorRef Actor => actor;

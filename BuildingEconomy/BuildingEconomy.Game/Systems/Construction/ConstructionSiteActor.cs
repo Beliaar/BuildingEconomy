@@ -11,24 +11,23 @@ namespace BuildingEconomy.Systems.Construction
     /// <summary>
     /// Akka Actor for handling messages from and to construction sites.
     /// </summary>
-    public class ComponentActor : ReceiveActor
+    public class ConstructionSiteActor : Actors.ComponentActor<Components.ConstructionSite>
     {
         public static double SecondsBetweenUpdate = 5.0;
 
-        public Components.ConstructionSite ConstructionSite { get; }
+        public Components.ConstructionSite ConstructionSite => Component as Components.ConstructionSite;
         public Building Building { get; }
         protected double elapsedTime;
 
-        public ComponentActor(Components.ConstructionSite constructionSite, Building building)
+        public ConstructionSiteActor(Components.ConstructionSite constructionSite, Building building) : base(constructionSite)
         {
-            ConstructionSite = constructionSite;
             Building = building;
             Become(Preparing);
         }
 
         public static Props Props(Components.ConstructionSite constructionSite, Building building)
         {
-            return Akka.Actor.Props.Create(() => new ComponentActor(constructionSite, building));
+            return Akka.Actor.Props.Create(() => new ConstructionSiteActor(constructionSite, building));
         }
 
         protected void Preparing()

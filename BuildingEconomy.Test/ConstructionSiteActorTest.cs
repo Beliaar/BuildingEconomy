@@ -39,9 +39,9 @@ namespace BuildingEconomy.Test
                 siteComponent
             };
 
-            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ComponentActor.SecondsBetweenUpdate);
+            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
-            var componentActor = Sys.ActorOf(ComponentActor.Props(siteComponent, building), "TestSiteActor");
+            var componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
             componentActor.Tell(new Update(new Xenko.Games.GameTime()));
             ExpectNoMsg(1000);
             Assert.Equal(0, siteComponent.CurrentStage);
@@ -74,9 +74,9 @@ namespace BuildingEconomy.Test
                 siteComponent
             };
 
-            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ComponentActor.SecondsBetweenUpdate);
+            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
-            var componentActor = Sys.ActorOf(ComponentActor.Props(siteComponent, building), "TestSiteActor");
+            var componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
             componentActor.Tell(new Update(new Xenko.Games.GameTime()));
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
@@ -122,9 +122,9 @@ namespace BuildingEconomy.Test
                 siteComponent
             };
 
-            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ComponentActor.SecondsBetweenUpdate);
+            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
-            var componentActor = Sys.ActorOf(ComponentActor.Props(siteComponent, building), "TestSiteActor");
+            var componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
             siteComponent.CurrentStageProgress = 1.0f;
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<WaitingForResources>();
@@ -194,9 +194,9 @@ namespace BuildingEconomy.Test
                 siteComponent
             };
 
-            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ComponentActor.SecondsBetweenUpdate);
+            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
-            var componentActor = Sys.ActorOf(ComponentActor.Props(siteComponent, building), "TestSiteActor");
+            var componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
             siteComponent.CurrentStageProgress = 1.0f;
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<WaitingForResources>();
@@ -273,9 +273,9 @@ namespace BuildingEconomy.Test
                 siteComponent
             };
 
-            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ComponentActor.SecondsBetweenUpdate);
+            var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
-            var componentActor = Sys.ActorOf(ComponentActor.Props(siteComponent, building), "TestSiteActor");
+            var componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
             siteComponent.CurrentStageProgress = 1.0f;
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<WaitingForResources>();

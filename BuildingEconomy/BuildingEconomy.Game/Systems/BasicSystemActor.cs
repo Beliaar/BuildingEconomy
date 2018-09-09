@@ -21,7 +21,6 @@ namespace BuildingEconomy.Systems
         protected virtual void Default()
         {
             Receive<Messages.Update>((message) => HandleStep(message));
-            Receive<Messages.IMessageToEntityComponentFirstOfType>(msg => HandleMessageToEntityComponent(msg));
         }
 
         public static string GetComponentName(EntityComponent component)
@@ -47,24 +46,6 @@ namespace BuildingEconomy.Systems
             return actor;
         }
 
-        /// <summary>
-        /// Returns an actor for the given component.
-        /// </summary>
-        /// <param name="actorName"></param>
-        /// <returns></returns>
-        protected abstract IActorRef GetOrCreateActor<C>(C component) where C : EntityComponent;
-
-        public void HandleMessageToEntityComponent(Messages.IMessageToEntityComponentFirstOfType message)
-        {
-            Entity entity = System.EntityManager.SingleOrDefault(e => e.Id == message.EntityId);
-            EntityComponent component = entity?.FirstOrDefault(c => c.GetType() == message.ComponentType);
-            if (component is null)
-            {
-                return;
-            }
-            ForwardMessageToComponent(message, component, Sender);
-
-        }
 
         public virtual void HandleStep(Messages.Update message)
         {

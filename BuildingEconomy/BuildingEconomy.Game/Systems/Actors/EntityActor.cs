@@ -16,6 +16,7 @@ namespace BuildingEconomy.Systems.Actors
         {
             this.entity = entity;
             this.componentActorFactory = componentActorFactory;
+            Receive<Update>(msg => HandleUpdate(msg));
             Receive<IMessageToEntityComponentFirstOfType>(msg => HandleMessageToEntityComponent(msg));
 
             //Should be last IMessageToEntity* since akka.NET takes the first match in the order they were added.
@@ -31,11 +32,19 @@ namespace BuildingEconomy.Systems.Actors
         private void HandleMessageToEntity(IMessageToEntity message)
         {
         }
-
+               
         private void HandleMessageToEntityComponent(IMessageToEntityComponentFirstOfType message)
         {
             EntityComponent entityComponent = entity.FirstOrDefault(c => c.GetType() == message.ComponentType);
-            componentActorFactory.GetOrCreateActorForComponent(entityComponent.Id, Context)?.Tell(message.Message, Sender);
+            componentActorFactory.GetOrCreateActorForComponent(entityComponent, Context)?.Tell(message.Message, Sender);
+        }
+
+        private void HandleUpdate(Update message)
+        {
+            foreach (EntityComponent entityComponent in entity)
+            {
+                componentActorFactory.GetOrCreateActorForComponent(entityComponent, Context)?.Forward(message);
+            }
         }
 
     }

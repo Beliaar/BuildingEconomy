@@ -31,32 +31,6 @@ namespace BuildingEconomy.Systems.Construction
 
         public override void HandleStep(Systems.Messages.Update message)
         {
-            IEnumerable<Components.ConstructionSite> constructionSites = System.EntityManager.SelectMany(e => e.Components.OfType<Components.ConstructionSite>());
-
-            foreach (Components.ConstructionSite constructionSite in constructionSites)
-            {
-                ForwardMessageToComponent(message, constructionSite, Self);
-            }
-        }
-
-        /// <summary>
-        /// Returns the actor for that construction site
-        /// </summary>
-        /// <param name="constructionSite"></param>
-        /// <returns></returns>
-        protected override IActorRef GetOrCreateActor<C>(C component)
-        {
-            var constructionSite = component as Components.ConstructionSite;
-            return constructionSite is null ?
-                    ActorRefs.Nobody
-                    :
-                    GetOrCreateActor(
-                    constructionSite,
-                    ComponentActor.Props(
-                        constructionSite,
-                        System.GetBuilding(constructionSite.Building)
-                        )
-                );
         }
 
         public void HandleConstructionFinished(Messages.ConstructionFinished message)

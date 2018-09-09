@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xenko.Engine;
 
 namespace BuildingEconomy.Systems.Interfaces
 {
     public interface IComponentActorFactory
     {
-        IActorRef GetOrCreateActorForComponent(Guid componentId, IActorRefFactory factory=null);
+        IActorRef GetOrCreateActorForComponent(EntityComponent component, IActorContext context);
     }
 }

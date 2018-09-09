@@ -6,6 +6,7 @@ using BuildingEconomy.Systems.Messages;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xenko.Engine;
 using Xunit;
@@ -19,6 +20,7 @@ namespace BuildingEconomy.Test
         public TestActor(Guid guid)
         {
             Receive<string>((msg) => Sender.Tell(guid));
+            Receive<Update>((msg) => Sender.Tell(guid));
         }
     }
 
@@ -37,16 +39,16 @@ namespace BuildingEconomy.Test
         {
             var mockMessage = new Mock<IMessageToEntityComponentFirstOfType>();
             var mockComponentActorFactory = new Mock<IComponentActorFactory>();
-            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<Guid>(), It.IsAny<IActorRefFactory>())).Returns((Guid guid, IActorRefFactory factory) =>
+            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
             {
-                return factory.ActorOf(Props.Create(() => new TestActor(guid)), $"{guid}");
+                return factory.ActorOf(Props.Create(() => new TestActor(component.Id)), $"{component.Id}");
             }
             );
 
-            var component = new TestComponent();
+            var testComponent = new TestComponent();
             var entity = new Entity
             {
-                component,
+                testComponent,
                 new TestComponent(),
             };
 
@@ -56,7 +58,7 @@ namespace BuildingEconomy.Test
 
             IActorRef entityActor = Sys.ActorOf(EntityActor.Props(entity, mockComponentActorFactory.Object));
             entityActor.Tell(mockMessage.Object);
-            ExpectMsg<Guid>(guid => guid == component.Id);
+            ExpectMsg(testComponent.Id);
 
             entity.RemoveAll<EntityComponent>();
             entity.Dispose();
@@ -64,12 +66,36 @@ namespace BuildingEconomy.Test
             entity = new Entity
             {
                 new TestComponent(),
-                component,
+                testComponent,
             };
 
             entityActor = Sys.ActorOf(EntityActor.Props(entity, mockComponentActorFactory.Object));
             entityActor.Tell(mockMessage.Object);
-            ExpectMsg<Guid>(guid => guid != component.Id);
+            ExpectMsg<Guid>(guid => guid != testComponent.Id);
         }
+
+        [Fact]
+        public void TestUpdate()
+        {
+            var mockComponentActorFactory = new Mock<IComponentActorFactory>();
+            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
+                {
+                    return factory.ActorOf(Props.Create(() => new TestActor(component.Id)), $"{component.Id}");
+                }
+            );
+
+            var entity = new Entity
+            {
+                new TestComponent(),
+                new TestComponent(),
+                new TestComponent(),
+            };
+
+            IActorRef entityActor = Sys.ActorOf(EntityActor.Props(entity, mockComponentActorFactory.Object));
+            entityActor.Tell(new Update(new Xenko.Games.GameTime()));
+            ExpectMsgAllOf(entity.Select(c => c.Id).ToArray());
+            ExpectNoMsg(TimeSpan.FromMilliseconds(1000));
+        }
+
     }
 }

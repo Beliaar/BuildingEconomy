@@ -15,7 +15,7 @@ namespace BuildingEconomy.Test
     public class ConstructionSystemActorTest : TestKit
     {
 
-        private class ConstructionTestComponentActor : ComponentActor
+        private class ConstructionTestComponentActor : ConstructionSiteActor
         {
             public ConstructionTestComponentActor(ConstructionSite constructionSite, Systems.Construction.Building building) : base(constructionSite, building)
             {
