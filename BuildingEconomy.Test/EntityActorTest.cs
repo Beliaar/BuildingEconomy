@@ -35,15 +35,15 @@ namespace BuildingEconomy.Test
             }
             );
 
-            var testComponent = new TestComponent();
+            var testComponent = new Utils.TestComponent();
             var entity = new Entity
             {
                 testComponent,
-                new TestComponent(),
+                new Utils.TestComponent(),
             };
 
             mockMessage.Setup(m => m.EntityId).Returns(entity.Id);
-            mockMessage.Setup(m => m.ComponentType).Returns(typeof(TestComponent));
+            mockMessage.Setup(m => m.ComponentType).Returns(typeof(Utils.TestComponent));
             mockMessage.Setup(m => m.Message).Returns("Test");
 
             IActorRef entityActor = Sys.ActorOf(EntityActor.Props(entity, mockComponentActorFactory.Object));
@@ -55,7 +55,7 @@ namespace BuildingEconomy.Test
 
             entity = new Entity
             {
-                new TestComponent(),
+                new Utils.TestComponent(),
                 testComponent,
             };
 
@@ -76,15 +76,15 @@ namespace BuildingEconomy.Test
 
             var entity = new Entity
             {
-                new TestComponent(),
-                new TestComponent(),
-                new TestComponent(),
+                new Utils.TestComponent(),
+                new Utils.TestComponent(),
+                new Utils.TestComponent(),
             };
 
             IActorRef entityActor = Sys.ActorOf(EntityActor.Props(entity, mockComponentActorFactory.Object));
             entityActor.Tell(new Update(new Xenko.Games.GameTime()));
             ExpectMsgAllOf(entity.Select(c => c.Id).ToArray());
-            ExpectNoMsg(TimeSpan.FromMilliseconds(1000));
+            ExpectNoMsg(500);
         }
 
     }

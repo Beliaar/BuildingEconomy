@@ -20,14 +20,14 @@ namespace BuildingEconomy.Test
         [Fact]
         public void TestGetOrCreateType()
         {
-            var mockComponentActorFactory = new Mock<ComponentActorFactory<TestComponent>>();
-            mockComponentActorFactory.Setup(f => f.GetProps(It.IsAny<TestComponent>())).Returns(Props.Create(() => new FactoryTestActor()));
+            var mockComponentActorFactory = new Mock<ComponentActorFactory<Utils.TestComponent>>();
+            mockComponentActorFactory.Setup(f => f.GetProps(It.IsAny<Utils.TestComponent>())).Returns(Props.Create(() => new FactoryTestActor()));
             var mockActorContext = new Mock<IActorContext>();
             var mockComponent = new Mock<EntityComponent>();
 
             IComponentActorFactory componentActorFactory = mockComponentActorFactory.Object;
 
-            var testComponentCorrect = new TestComponent();
+            var testComponentCorrect = new Utils.TestComponent();
 
 
             Assert.Null(componentActorFactory.GetOrCreateActorForComponent(testComponentCorrect, mockActorContext.Object));
