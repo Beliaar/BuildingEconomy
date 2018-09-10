@@ -1,11 +1,13 @@
 ﻿using Akka.Actor;
+using BuildingEconomy.Systems.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
 {
-    public class ConstructionSystem : BasicSystem<ConstructionSystem>
+    public class ConstructionSystem : BasicSystem<ConstructionSystem>, Construction.Interfaces.IBuildingManager
     {
         public override string Name => "Construction";
         public override IActorRef Actor => actor;
@@ -20,38 +22,6 @@ namespace BuildingEconomy.Systems
 
         public override void Initialize()
         {
-            var warehouse = new Construction.Building()
-            {
-                Name = "Warehouse"
-            };
-
-            warehouse.Stages.Add(new Construction.Building.Stage
-            {
-                NeededRessources = new Dictionary<string, int>
-                {
-                    {"Wood", 4 },
-                },
-                Steps = 4,
-            });
-            warehouse.Stages.Add(new Construction.Building.Stage
-            {
-                NeededRessources = new Dictionary<string, int>
-                {
-                    {"Wood", 2 },
-                    {"Stone", 4 }
-                },
-                Steps = 6,
-            });
-            warehouse.Stages.Add(new Construction.Building.Stage
-            {
-                NeededRessources = new Dictionary<string, int>
-                {
-                    {"Wood", 2 },
-                    {"Stone", 3 }
-                },
-                Steps = 5,
-            });
-            AddBuilding(warehouse);
         }
 
         public void AddBuilding(Construction.Building building)
