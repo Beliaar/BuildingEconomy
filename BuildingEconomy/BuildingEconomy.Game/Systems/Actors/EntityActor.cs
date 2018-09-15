@@ -1,9 +1,11 @@
 ﻿using Akka.Actor;
 using BuildingEconomy.Systems.Interfaces;
 using BuildingEconomy.Systems.Messages;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
+using BuildingEconomy.Utils;
 
 namespace BuildingEconomy.Systems.Actors
 {
@@ -11,6 +13,8 @@ namespace BuildingEconomy.Systems.Actors
     {
         private readonly Entity entity;
         private readonly IComponentActorFactory componentActorFactory;
+        private Queue<Orders.Interfaces.IOrder> orderQueue = new Queue<Orders.Interfaces.IOrder>();
+        private Orders.Interfaces.IOrder currentOrder = null;
 
         public EntityActor(Entity entity, IComponentActorFactory componentActorFactory)
         {
@@ -41,6 +45,17 @@ namespace BuildingEconomy.Systems.Actors
 
         private void HandleUpdate(Update message)
         {
+            if (currentOrder != null || orderQueue.TryDequeue(out currentOrder))
+            {
+                if (currentOrder.IsComplete && !(orderQueue.TryDequeue(out currentOrder)))
+                {
+                    currentOrder = null;
+                }
+                else
+                {
+                    currentOrder.Update(entity, message.UpdateTime);
+                }
+            }
             foreach (EntityComponent entityComponent in entity)
             {
                 componentActorFactory.GetOrCreateActorForComponent(entityComponent, Context)?.Forward(message);

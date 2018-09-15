@@ -9,7 +9,7 @@ Meta:
     RootNamespace: BuildingEconomy
     Dependencies:
         -   Name: Xenko
-            Version: 3.0.0.4
+            Version: 3.0.0.5
             RootAssets: []
 LocalDependencies: []
 Profiles:

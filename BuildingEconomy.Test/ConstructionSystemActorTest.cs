@@ -26,7 +26,6 @@ namespace BuildingEconomy.Test
             var guid = new Guid();
             system.Actor.Tell(new Systems.Construction.Messages.BuilderNeeded(guid));
             ExpectMsg<Systems.Construction.Messages.BuilderNeeded>(bn => bn.ComponentId == guid);
-
         }
 
         [Fact]
