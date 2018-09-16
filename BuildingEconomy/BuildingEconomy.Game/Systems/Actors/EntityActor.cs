@@ -1,11 +1,10 @@
 ﻿using Akka.Actor;
 using BuildingEconomy.Systems.Interfaces;
 using BuildingEconomy.Systems.Messages;
-using System.Collections.Concurrent;
+using BuildingEconomy.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
-using BuildingEconomy.Utils;
 
 namespace BuildingEconomy.Systems.Actors
 {
@@ -22,7 +21,13 @@ namespace BuildingEconomy.Systems.Actors
             this.componentActorFactory = componentActorFactory;
             Receive<Update>(msg => HandleUpdate(msg));
             Receive<IMessageToEntityComponentFirstOfType>(msg => HandleMessageToEntityComponent(msg));
-
+            Receive<EnqueueOrder>(msg => orderQueue.Enqueue(msg.Order));
+            Receive<Stop>(msg =>
+                {
+                    orderQueue.Clear();
+                    currentOrder = null;
+                }
+            );
             //Should be last IMessageToEntity* since akka.NET takes the first match in the order they were added.
             Receive<IMessageToEntity>(msg => HandleMessageToEntity(msg));
             ReceiveAny(msg => Context.Parent.Forward(msg));
@@ -36,7 +41,7 @@ namespace BuildingEconomy.Systems.Actors
         private void HandleMessageToEntity(IMessageToEntity message)
         {
         }
-               
+
         private void HandleMessageToEntityComponent(IMessageToEntityComponentFirstOfType message)
         {
             EntityComponent entityComponent = entity.FirstOrDefault(c => c.GetType() == message.ComponentType);
@@ -45,17 +50,23 @@ namespace BuildingEconomy.Systems.Actors
 
         private void HandleUpdate(Update message)
         {
-            if (currentOrder != null || orderQueue.TryDequeue(out currentOrder))
+            if (currentOrder?.IsComplete(entity) ?? false)
             {
-                if (currentOrder.IsComplete && !(orderQueue.TryDequeue(out currentOrder)))
+                currentOrder = null;
+            }
+            if (currentOrder is null)
+            {
+                if (!orderQueue.TryDequeue(out currentOrder))
                 {
                     currentOrder = null;
                 }
-                else
-                {
-                    currentOrder.Update(entity, message.UpdateTime);
-                }
             }
+            if (!currentOrder?.IsValid(entity) ?? false)
+            {
+                Context.Parent.Tell(new InvalidOrder(entity.Id, currentOrder));
+                currentOrder = null;
+            }
+            currentOrder?.Update(entity, message.UpdateTime);
             foreach (EntityComponent entityComponent in entity)
             {
                 componentActorFactory.GetOrCreateActorForComponent(entityComponent, Context)?.Forward(message);

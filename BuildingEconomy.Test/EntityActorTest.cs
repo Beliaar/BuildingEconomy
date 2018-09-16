@@ -87,5 +87,41 @@ namespace BuildingEconomy.Test
             ExpectNoMsg(500);
         }
 
+        [Fact]
+        public void TestOrders()
+        {
+
+            var mockOrder = new Mock<Systems.Orders.Interfaces.IOrder>();
+            mockOrder.Setup(o => o.IsValid(It.IsAny<Entity>())).Returns(false);
+            var entity = new Entity();
+            var mockComponentActorFactory = new Mock<IComponentActorFactory>();
+            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
+                {
+                    return ActorRefs.Nobody;
+                }
+            );            
+
+            IActorRef entityActor = ActorOfAsTestActorRef<EntityActor>(EntityActor.Props(entity, mockComponentActorFactory.Object), TestActor);
+
+            entityActor.Tell(new EnqueueOrder(entity.Id, mockOrder.Object));
+            entityActor.Tell(new Update(new Xenko.Games.GameTime()));
+            ExpectMsg<InvalidOrder>();
+            mockOrder.Reset();
+            mockOrder.Setup(o => o.IsValid(It.IsAny<Entity>())).Returns(true);
+            mockOrder.Setup(o => o.IsComplete(It.IsAny<Entity>())).Returns(false);
+            entityActor.Tell(new EnqueueOrder(entity.Id, mockOrder.Object));
+            entityActor.Tell(new Update(new Xenko.Games.GameTime()));
+            ExpectNoMsg();
+            mockOrder.Verify(o => o.IsComplete(It.IsAny<Entity>()), Times.AtMostOnce);
+            mockOrder.Verify(o => o.IsValid(It.IsAny<Entity>()), Times.Once);
+            mockOrder.Verify(o => o.Update(It.IsAny<Entity>(), It.IsAny<Xenko.Games.GameTime>()), Times.Once);
+            mockOrder.Invocations.Clear();
+            mockOrder.Setup(o => o.IsComplete(It.IsAny<Entity>())).Returns(true);
+            entityActor.Tell(new Update(new Xenko.Games.GameTime()));
+            ExpectNoMsg(100);
+            mockOrder.Verify(o => o.IsComplete(It.IsAny<Entity>()), Times.Once);
+            mockOrder.Verify(o => o.IsValid(It.IsAny<Entity>()), Times.Never);
+            mockOrder.Verify(o => o.Update(It.IsAny<Entity>(), It.IsAny<Xenko.Games.GameTime>()), Times.Never);
+        }
     }
 }
