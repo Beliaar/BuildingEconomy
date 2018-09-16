@@ -120,7 +120,7 @@ namespace BuildingEconomy.Test
             entityActor.Tell(new Update(new Xenko.Games.GameTime()));
             ExpectNoMsg(100);
             mockOrder.Verify(o => o.IsComplete(It.IsAny<Entity>()), Times.Once);
-            mockOrder.Verify(o => o.IsValid(It.IsAny<Entity>()), Times.Never);
+            mockOrder.Verify(o => o.IsValid(It.IsAny<Entity>()), Times.AtMostOnce);
             mockOrder.Verify(o => o.Update(It.IsAny<Entity>(), It.IsAny<Xenko.Games.GameTime>()), Times.Never);
         }
     }
