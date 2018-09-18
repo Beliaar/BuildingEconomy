@@ -10,6 +10,6 @@ namespace BuildingEconomy.Systems.Interfaces
 {
     public interface IComponentActorFactory
     {
-        IActorRef GetOrCreateActorForComponent(EntityComponent component, IActorContext context);
+        IActorRef GetOrCreateActorForComponent(EntityComponent component);
     }
 }

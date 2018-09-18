@@ -29,9 +29,9 @@ namespace BuildingEconomy.Test
         {
             var mockMessage = new Mock<IMessageToEntityComponentFirstOfType>();
             var mockComponentActorFactory = new Mock<IComponentActorFactory>();
-            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
+            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>())).Returns((EntityComponent component) =>
             {
-                return factory.ActorOf(Props.Create(() => new EntityTestActor(component.Id)), $"{component.Id}");
+                return Sys.ActorOf(Props.Create(() => new EntityTestActor(component.Id)), $"{component.Id}");
             }
             );
 
@@ -68,9 +68,9 @@ namespace BuildingEconomy.Test
         public void TestUpdate()
         {
             var mockComponentActorFactory = new Mock<IComponentActorFactory>();
-            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
+            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>())).Returns((EntityComponent component) =>
                 {
-                    return factory.ActorOf(Props.Create(() => new EntityTestActor(component.Id)), $"{component.Id}");
+                    return Sys.ActorOf(Props.Create(() => new EntityTestActor(component.Id)), $"{component.Id}");
                 }
             );
 
@@ -95,7 +95,7 @@ namespace BuildingEconomy.Test
             mockOrder.Setup(o => o.IsValid(It.IsAny<Entity>())).Returns(false);
             var entity = new Entity();
             var mockComponentActorFactory = new Mock<IComponentActorFactory>();
-            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>(), It.IsAny<IActorContext>())).Returns((EntityComponent component, IActorRefFactory factory) =>
+            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>())).Returns((EntityComponent component) =>
                 {
                     return ActorRefs.Nobody;
                 }

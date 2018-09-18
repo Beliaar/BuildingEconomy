@@ -13,7 +13,7 @@ namespace BuildingEconomy.Systems.Construction
     {
         readonly Interfaces.IBuildingManager buildingManager;
 
-        public ConstructionSiteActorFactory(Interfaces.IBuildingManager buildingManager)
+        public ConstructionSiteActorFactory(Interfaces.IBuildingManager buildingManager, IActorContext factoryContext) : base(factoryContext)
         {
             this.buildingManager = buildingManager;
         }

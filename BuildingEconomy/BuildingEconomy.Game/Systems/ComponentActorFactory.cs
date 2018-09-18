@@ -10,24 +10,40 @@ namespace BuildingEconomy.Systems
 {
     public abstract class ComponentActorFactory<T> : Interfaces.IComponentActorFactory where T : EntityComponent
     {
-        public IActorRef GetOrCreateActorForComponent(T component, IActorContext context)
+        private readonly IActorRefFactory actorRefFactory;
+
+        public ComponentActorFactory(IActorRefFactory actorRefFactory)
+        {
+            this.actorRefFactory = actorRefFactory;
+        }
+
+        public IActorRef GetOrCreateActorForComponent(T component)
         {
             string actorName = $"Component_{component.Id}";
-            IActorRef componentActor = context.Child(actorName);
+            IActorRef componentActor;
+            try
+            {
+                componentActor = actorRefFactory.ActorSelection($"user/{actorName}").ResolveOne(TimeSpan.FromSeconds(1)).Result;
+            }
+            catch (AggregateException exception) when (exception.InnerException is ActorNotFoundException)
+            {
+                componentActor = ActorRefs.Nobody;
+            }
+            
             return !componentActor.IsNobody() ? 
                 componentActor 
                 :
-                context.ActorOf(GetProps(component), actorName);
+                actorRefFactory.ActorOf(GetProps(component), actorName);
         }
 
-        public IActorRef GetOrCreateActorForComponent(EntityComponent component, IActorContext context)
+        public IActorRef GetOrCreateActorForComponent(EntityComponent component)
         {
             var asT = component as T;
             if (asT is null)
             {
                 throw new ArgumentException($"Wrong component type. Expected {typeof(T).FullName} got {component.GetType().Name}");
             }
-            return GetOrCreateActorForComponent(asT, context);
+            return GetOrCreateActorForComponent(asT);
         }
 
         public abstract Props GetProps(T component);

@@ -45,7 +45,7 @@ namespace BuildingEconomy.Systems.Actors
         private void HandleMessageToEntityComponent(IMessageToEntityComponentFirstOfType message)
         {
             EntityComponent entityComponent = entity.FirstOrDefault(c => c.GetType() == message.ComponentType);
-            componentActorFactory.GetOrCreateActorForComponent(entityComponent, Context)?.Tell(message.Message, Sender);
+            componentActorFactory.GetOrCreateActorForComponent(entityComponent)?.Tell(message.Message, Sender);
         }
 
         private void HandleUpdate(Update message)
@@ -69,7 +69,7 @@ namespace BuildingEconomy.Systems.Actors
             currentOrder?.Update(entity, message.UpdateTime);
             foreach (EntityComponent entityComponent in entity)
             {
-                componentActorFactory.GetOrCreateActorForComponent(entityComponent, Context)?.Forward(message);
+                componentActorFactory.GetOrCreateActorForComponent(entityComponent)?.Forward(message);
             }
         }
 

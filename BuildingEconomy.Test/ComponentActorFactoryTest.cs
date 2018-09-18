@@ -20,7 +20,7 @@ namespace BuildingEconomy.Test
         [Fact]
         public void TestGetOrCreateType()
         {
-            var mockComponentActorFactory = new Mock<ComponentActorFactory<Utils.TestComponent>>();
+            var mockComponentActorFactory = new Mock<ComponentActorFactory<Utils.TestComponent>>(Sys);
             mockComponentActorFactory.Setup(f => f.GetProps(It.IsAny<Utils.TestComponent>())).Returns(Props.Create(() => new FactoryTestActor()));
             var mockActorContext = new Mock<IActorContext>();
             var mockComponent = new Mock<EntityComponent>();
@@ -29,9 +29,11 @@ namespace BuildingEconomy.Test
 
             var testComponentCorrect = new Utils.TestComponent();
 
+            // TODO: Check if this test was complete.
+            // TODO: Add check if it returns an already present actor.
 
-            Assert.Null(componentActorFactory.GetOrCreateActorForComponent(testComponentCorrect, mockActorContext.Object));
-            Assert.Throws<ArgumentException>(() => componentActorFactory.GetOrCreateActorForComponent(mockComponent.Object, mockActorContext.Object));
+            Assert.NotNull(componentActorFactory.GetOrCreateActorForComponent(testComponentCorrect));
+            Assert.Throws<ArgumentException>(() => componentActorFactory.GetOrCreateActorForComponent(mockComponent.Object));
 
         }
     }
