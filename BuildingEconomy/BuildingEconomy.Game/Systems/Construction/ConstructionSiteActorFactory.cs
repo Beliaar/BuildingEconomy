@@ -1,17 +1,10 @@
 ﻿using Akka.Actor;
-using BuildingEconomy.Systems.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xenko.Engine;
 
 namespace BuildingEconomy.Systems.Construction
 {
-    class ConstructionSiteActorFactory : ComponentActorFactory<Components.ConstructionSite>
+    public class ConstructionSiteActorFactory : ComponentActorFactory<Components.ConstructionSite>
     {
-        readonly Interfaces.IBuildingManager buildingManager;
+        private readonly Interfaces.IBuildingManager buildingManager;
 
         public ConstructionSiteActorFactory(Interfaces.IBuildingManager buildingManager, IActorContext factoryContext) : base(factoryContext)
         {

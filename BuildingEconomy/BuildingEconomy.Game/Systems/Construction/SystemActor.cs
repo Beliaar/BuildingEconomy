@@ -1,5 +1,4 @@
 ﻿using Akka.Actor;
-using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
 

@@ -5,9 +5,7 @@ using BuildingEconomy.Systems.Interfaces;
 using BuildingEconomy.Systems.Messages;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xenko.Engine;
 using Xunit;
 
@@ -15,7 +13,7 @@ namespace BuildingEconomy.Test
 {
     public class EntityActorTest : TestKit
     {
-        class EntityTestActor : ReceiveActor
+        private class EntityTestActor : ReceiveActor
         {
             public EntityTestActor(Guid guid)
             {
@@ -99,7 +97,7 @@ namespace BuildingEconomy.Test
                 {
                     return ActorRefs.Nobody;
                 }
-            );            
+            );
 
             IActorRef entityActor = ActorOfAsTestActorRef<EntityActor>(EntityActor.Props(entity, mockComponentActorFactory.Object), TestActor);
 

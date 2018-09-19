@@ -5,9 +5,7 @@ using BuildingEconomy.Systems.Construction;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xenko.Engine;
-using Xenko.Games;
 using Xunit;
 
 namespace BuildingEconomy.Test
@@ -49,7 +47,7 @@ namespace BuildingEconomy.Test
             actorRefFactoryMock.Setup(f => f.ActorOf(It.IsAny<Props>(), It.IsAny<string>())).Returns((Props props, string name) => ActorOfAsTestActorRef<SystemActor>(props, TestActor, name));
 
             var scene = new Scene();
-            var mockServiceRegistry = new Mock<Xenko.Core.IServiceRegistry>();            
+            var mockServiceRegistry = new Mock<Xenko.Core.IServiceRegistry>();
             var sceneInstance = new SceneInstance(mockServiceRegistry.Object, scene);
             var system = new Systems.ConstructionSystem(sceneInstance, actorRefFactoryMock.Object);
             var building = new Systems.Construction.Building()
@@ -71,7 +69,7 @@ namespace BuildingEconomy.Test
             system.AddBuilding(building);
             var component = new ConstructionSite()
             {
-                Building = "Test",                
+                Building = "Test",
             };
             var entity = new Entity
             {

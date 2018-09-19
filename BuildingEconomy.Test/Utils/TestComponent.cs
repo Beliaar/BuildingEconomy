@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xenko.Engine;
+﻿using Xenko.Engine;
 
 namespace BuildingEconomy.Test.Utils
 {

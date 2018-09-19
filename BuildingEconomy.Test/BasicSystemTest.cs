@@ -1,10 +1,8 @@
 ﻿using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using BuildingEconomy.Systems;
-using Moq;
 using System;
 using Xenko.Engine;
-using Xunit;
 
 namespace BuildingEconomy.Test
 {

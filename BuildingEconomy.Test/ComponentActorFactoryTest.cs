@@ -4,8 +4,6 @@ using BuildingEconomy.Systems;
 using BuildingEconomy.Systems.Interfaces;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xenko.Engine;
 using Xunit;
 
@@ -13,7 +11,7 @@ namespace BuildingEconomy.Test
 {
     public class ComponentActorFactoryTest : TestKit
     {
-        class FactoryTestActor : ReceiveActor
+        private class FactoryTestActor : ReceiveActor
         {
         }
 

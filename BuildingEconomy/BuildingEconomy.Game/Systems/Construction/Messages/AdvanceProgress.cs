@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BuildingEconomy.Systems.Construction.Messages
+﻿namespace BuildingEconomy.Systems.Construction.Messages
 {
     public class AdvanceProgress
     {

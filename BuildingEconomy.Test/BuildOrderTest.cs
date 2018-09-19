@@ -1,11 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using BuildingEconomy.Systems;
-using BuildingEconomy.Systems.Interfaces;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xenko.Engine;
 using Xunit;
 
@@ -13,7 +9,7 @@ namespace BuildingEconomy.Test
 {
     public class BuildOrderTest : TestKit
     {
-        class EntityTestActor : ReceiveActor
+        private class EntityTestActor : ReceiveActor
         {
             public EntityTestActor()
             {
@@ -39,7 +35,7 @@ namespace BuildingEconomy.Test
         }
 
         [Fact]
-        void TestUpdate()
+        private void TestUpdate()
         {
             var entity = new Entity();
             var mockComponentActorFactory = new Mock<ComponentActorFactory<Components.ConstructionSite>>(Sys);

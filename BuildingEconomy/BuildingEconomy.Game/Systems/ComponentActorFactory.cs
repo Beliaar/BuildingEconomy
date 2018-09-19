@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Akka.Actor;
+﻿using Akka.Actor;
+using System;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
@@ -29,9 +25,9 @@ namespace BuildingEconomy.Systems
             {
                 componentActor = ActorRefs.Nobody;
             }
-            
-            return !componentActor.IsNobody() ? 
-                componentActor 
+
+            return !componentActor.IsNobody() ?
+                componentActor
                 :
                 actorRefFactory.ActorOf(GetProps(component), actorName);
         }
