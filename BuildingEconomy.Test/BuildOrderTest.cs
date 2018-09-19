@@ -20,7 +20,13 @@ namespace BuildingEconomy.Test
         [Fact]
         public void TestValid()
         {
-            // TODO: Add test after a builder component was added.
+            var mockComponentActorFactory = new Mock<ComponentActorFactory<Components.ConstructionSite>>(Sys);
+            var constructionSite = new Components.ConstructionSite();
+            var buildOrder = new Systems.Orders.Build(constructionSite, mockComponentActorFactory.Object);
+            var entity = new Entity();
+            Assert.False(buildOrder.IsValid(entity));
+            entity.Add(new Components.Builder());
+            Assert.True(buildOrder.IsValid(entity));
         }
 
         [Fact]
@@ -43,7 +49,13 @@ namespace BuildingEconomy.Test
             var constructionSite = new Components.ConstructionSite();
             var buildOrder = new Systems.Orders.Build(constructionSite, mockComponentActorFactory.Object);
             buildOrder.Update(entity, new Xenko.Games.GameTime());
+            ExpectNoMsg(100);
+            entity.Add(new Components.Builder());
+            buildOrder.Update(entity, new Xenko.Games.GameTime());
             ExpectMsg<Systems.Construction.Messages.AdvanceProgress>();
+            constructionSite.CurrentStageProgress = 1.0f;
+            buildOrder.Update(entity, new Xenko.Games.GameTime());
+            ExpectNoMsg(1000);
         }
     }
 }

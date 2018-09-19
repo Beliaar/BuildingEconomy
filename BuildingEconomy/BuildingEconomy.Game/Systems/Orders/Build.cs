@@ -22,12 +22,15 @@ namespace BuildingEconomy.Systems.Orders
 
         public bool IsValid(Entity entity)
         {
-            // TODO: Add a builder component and check if entity has it.
-            return entity != null;
+            return entity.Get<Components.Builder>() != null;
         }
 
         public void Update(Entity entity, GameTime updateTime)
         {
+            if (IsComplete(entity) || !IsValid(entity))
+            {
+                return;
+            }
             // TODO: Move to entity if not near.
             IActorRef targetActor = componentActorFactory.GetOrCreateActorForComponent(target);
 
