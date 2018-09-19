@@ -29,10 +29,10 @@ namespace BuildingEconomy.Test
 
             var testComponentCorrect = new Utils.TestComponent();
 
-            // TODO: Check if this test was complete.
-            // TODO: Add check if it returns an already present actor.
+            IActorRef actorRef = componentActorFactory.GetOrCreateActorForComponent(testComponentCorrect);
 
-            Assert.NotNull(componentActorFactory.GetOrCreateActorForComponent(testComponentCorrect));
+            Assert.NotNull(actorRef);
+            Assert.Equal(actorRef, componentActorFactory.GetOrCreateActorForComponent(testComponentCorrect));
             Assert.Throws<ArgumentException>(() => componentActorFactory.GetOrCreateActorForComponent(mockComponent.Object));
 
         }
