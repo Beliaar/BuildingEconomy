@@ -3,7 +3,7 @@
 namespace BuildingEconomy.Systems.Messages
 {
     /// <summary>
-    /// Stops the current order and removes all queued orders of the entity.
+    ///     Stops the current order and removes all queued orders of the entity.
     /// </summary>
     public class Stop : IMessageToEntity
     {

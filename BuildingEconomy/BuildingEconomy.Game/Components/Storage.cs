@@ -3,18 +3,19 @@ using Xenko.Engine;
 
 namespace BuildingEconomy.Components
 {
+    /// <inheritdoc />
     /// <summary>
-    /// Working data of a storage.
+    ///     Working data of a storage.
     /// </summary>
     public class Storage : EntityComponent
     {
         /// <summary>
-        /// The list of stored items.
+        ///     The list of stored items.
         /// </summary>
         public ConcurrentDictionary<string, int> Items { get; } = new ConcurrentDictionary<string, int>();
 
         /// <summary>
-        /// Items requested to be moved to this storage.
+        ///     Items requested to be moved to this storage.
         /// </summary>
         public ConcurrentDictionary<string, int> RequestedItems { get; } = new ConcurrentDictionary<string, int>();
     }

@@ -1,21 +1,22 @@
 ﻿using Akka.Actor;
+using BuildingEconomy.Systems.Messages;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
 {
     public abstract class BasicSystemActor<T> : ReceiveActor where T : BasicSystem<T>
     {
-        public T System { get; }
-
-        public BasicSystemActor(T system)
+        protected BasicSystemActor(T system)
         {
             System = system;
             Become(Default);
         }
 
+        public T System { get; }
+
         protected virtual void Default()
         {
-            Receive<Messages.Update>((message) => HandleStep(message));
+            Receive<Update>(message => HandleStep(message));
         }
 
         public static string GetComponentName(EntityComponent component)
@@ -33,7 +34,7 @@ namespace BuildingEconomy.Systems
         {
             string actorName = GetComponentName(component);
             IActorRef actor = Context.Child(actorName);
-            if (actor == ActorRefs.Nobody && props != null)
+            if (actor.Equals(ActorRefs.Nobody) && props != null)
             {
                 actor = Context.ActorOf(props, actorName);
             }
@@ -42,9 +43,8 @@ namespace BuildingEconomy.Systems
         }
 
 
-        public virtual void HandleStep(Messages.Update message)
+        public virtual void HandleStep(Update message)
         {
         }
-
     }
 }

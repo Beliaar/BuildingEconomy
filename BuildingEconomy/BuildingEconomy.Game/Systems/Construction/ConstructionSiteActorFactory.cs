@@ -1,17 +1,20 @@
 ﻿using Akka.Actor;
+using BuildingEconomy.Components;
+using BuildingEconomy.Systems.Construction.Interfaces;
 
 namespace BuildingEconomy.Systems.Construction
 {
-    public class ConstructionSiteActorFactory : ComponentActorFactory<Components.ConstructionSite>
+    public class ConstructionSiteActorFactory : ComponentActorFactory<ConstructionSite>
     {
-        private readonly Interfaces.IBuildingManager buildingManager;
+        private readonly IBuildingManager buildingManager;
 
-        public ConstructionSiteActorFactory(Interfaces.IBuildingManager buildingManager, IActorContext factoryContext) : base(factoryContext)
+        public ConstructionSiteActorFactory(IBuildingManager buildingManager, IActorContext factoryContext) : base(
+            factoryContext)
         {
             this.buildingManager = buildingManager;
         }
 
-        public override Props GetProps(Components.ConstructionSite component)
+        public override Props GetProps(ConstructionSite component)
         {
             return ConstructionSiteActor.Props(component, buildingManager.GetBuilding(component.Building));
         }

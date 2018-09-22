@@ -6,14 +6,14 @@ namespace BuildingEconomy.Systems
 {
     public abstract class BasicSystem<T> : IGameSystemBase where T : BasicSystem<T>
     {
-        public EntityManager EntityManager { get; }
-        public int ReferenceCount { get; protected set; }
-        public abstract IActorRef Actor { get; }
-
-        public BasicSystem(EntityManager entityManager)
+        protected BasicSystem(EntityManager entityManager)
         {
             EntityManager = entityManager;
         }
+
+        public EntityManager EntityManager { get; }
+        public abstract IActorRef Actor { get; }
+        public int ReferenceCount { get; protected set; }
 
         public abstract string Name { get; }
 

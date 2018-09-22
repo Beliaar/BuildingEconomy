@@ -1,5 +1,5 @@
-﻿using Akka.Actor;
-using System;
+﻿using System;
+using Akka.Actor;
 
 namespace BuildingEconomy.Systems.Interfaces
 {

@@ -5,11 +5,11 @@ namespace BuildingEconomy.Systems.Actors
 {
     public abstract class ComponentActor<T> : ReceiveActor where T : EntityComponent
     {
-        protected T Component { get; set; }
-
-        public ComponentActor(T component)
+        protected ComponentActor(T component)
         {
             Component = component;
         }
+
+        protected T Component { get; set; }
     }
 }

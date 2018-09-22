@@ -1,16 +1,17 @@
 ﻿using System;
+using BuildingEconomy.Systems.Orders.Interfaces;
 
 namespace BuildingEconomy.Systems.Messages
 {
     public class InvalidOrder
     {
-        public InvalidOrder(Guid entityId, Orders.Interfaces.IOrder order)
+        public InvalidOrder(Guid entityId, IOrder order)
         {
             EntityId = entityId;
             Order = order;
         }
 
         public Guid EntityId { get; }
-        public Orders.Interfaces.IOrder Order { get; }
+        public IOrder Order { get; }
     }
 }

@@ -1,4 +1,7 @@
 ﻿using Akka.Actor;
+using BuildingEconomy.Components;
+using BuildingEconomy.Systems.Construction.Messages;
+using BuildingEconomy.Systems.Messages;
 using System.Linq;
 using Xenko.Engine;
 
@@ -13,13 +16,13 @@ namespace BuildingEconomy.Systems.Construction
         protected override void Default()
         {
             base.Default();
-            Receive<Messages.BuilderNeeded>(msg =>
+            Receive<BuilderNeeded>(msg =>
             {
                 // TODO: Set orders for builders.
                 Context.Parent.Tell(msg);
             });
-            Receive<Messages.ConstructionFinished>(msg => HandleConstructionFinished(msg));
-            Receive<Messages.WaitingForResources>(msg => Context.Parent.Tell(msg));
+            Receive<ConstructionFinished>(msg => HandleConstructionFinished(msg));
+            Receive<WaitingForResources>(msg => Context.Parent.Tell(msg));
         }
 
         public static Props Props(ConstructionSystem system)
@@ -28,14 +31,19 @@ namespace BuildingEconomy.Systems.Construction
         }
 
 
-        public override void HandleStep(Systems.Messages.Update message)
+        public override void HandleStep(Update message)
         {
         }
 
-        public void HandleConstructionFinished(Messages.ConstructionFinished message)
+        public void HandleConstructionFinished(ConstructionFinished message)
         {
             Entity entity = System.EntityManager.SingleOrDefault(e => e.Id == message.EntityId);
-            entity.RemoveAll<Components.ConstructionSite>();
+            if (entity is null)
+            {
+                // TODO: Log error/warning.
+                return;
+            }
+            entity.RemoveAll<ConstructionSite>();
             var building = new Components.Building
             {
                 Name = message.Building
@@ -43,7 +51,5 @@ namespace BuildingEconomy.Systems.Construction
             entity.Add(building);
             // TODO: Add building specific components.
         }
-
-
     }
 }

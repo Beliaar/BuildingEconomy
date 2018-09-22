@@ -57,7 +57,7 @@ namespace BuildingEconomy.Test
                 {
                     new Systems.Construction.Building.Stage()
                     {
-                        NeededRessources = new Dictionary<string, int>
+                        NeededResources = new Dictionary<string, int>
                         {
                             { "Wood", 2 }
                         },

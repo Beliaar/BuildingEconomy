@@ -35,9 +35,9 @@ namespace BuildingEconomy.Test
             }
         }
 
-        public abstract class TestSystem : Systems.BasicSystem<TestSystem>
+        public abstract class TestSystem : BasicSystem<TestSystem>
         {
-            public TestSystem(EntityManager entityManager) : base(entityManager)
+            protected TestSystem(EntityManager entityManager) : base(entityManager)
             {
             }
         }

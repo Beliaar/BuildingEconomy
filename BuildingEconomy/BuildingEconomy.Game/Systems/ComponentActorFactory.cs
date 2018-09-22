@@ -1,16 +1,28 @@
 ﻿using Akka.Actor;
+using BuildingEconomy.Systems.Interfaces;
 using System;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
 {
-    public abstract class ComponentActorFactory<T> : Interfaces.IComponentActorFactory where T : EntityComponent
+    public abstract class ComponentActorFactory<T> : IComponentActorFactory where T : EntityComponent
     {
         private readonly IActorRefFactory actorRefFactory;
 
-        public ComponentActorFactory(IActorRefFactory actorRefFactory)
+        protected ComponentActorFactory(IActorRefFactory actorRefFactory)
         {
             this.actorRefFactory = actorRefFactory;
+        }
+
+        public IActorRef GetOrCreateActorForComponent(EntityComponent component)
+        {
+            if (!(component is T asT))
+            {
+                throw new ArgumentException(
+                    $"Wrong component type. Expected {typeof(T).FullName} got {component.GetType().Name}");
+            }
+
+            return GetOrCreateActorForComponent(asT);
         }
 
         public IActorRef GetOrCreateActorForComponent(T component)
@@ -19,27 +31,17 @@ namespace BuildingEconomy.Systems
             IActorRef componentActor;
             try
             {
-                componentActor = actorRefFactory.ActorSelection($"user/{actorName}").ResolveOne(TimeSpan.FromSeconds(1)).Result;
+                componentActor = actorRefFactory.ActorSelection($"user/{actorName}").ResolveOne(TimeSpan.FromSeconds(1))
+                    .Result;
             }
             catch (AggregateException exception) when (exception.InnerException is ActorNotFoundException)
             {
                 componentActor = ActorRefs.Nobody;
             }
 
-            return !componentActor.IsNobody() ?
-                componentActor
-                :
-                actorRefFactory.ActorOf(GetProps(component), actorName);
-        }
-
-        public IActorRef GetOrCreateActorForComponent(EntityComponent component)
-        {
-            var asT = component as T;
-            if (asT is null)
-            {
-                throw new ArgumentException($"Wrong component type. Expected {typeof(T).FullName} got {component.GetType().Name}");
-            }
-            return GetOrCreateActorForComponent(asT);
+            return !componentActor.IsNobody()
+                ? componentActor
+                : actorRefFactory.ActorOf(GetProps(component), actorName);
         }
 
         public abstract Props GetProps(T component);

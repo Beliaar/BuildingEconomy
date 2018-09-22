@@ -5,7 +5,7 @@ namespace BuildingEconomy.Utils
 {
     public static class QueueExtension
     {
-#if NET461 // Current .NET version that XENKO uses.
+#if NET461 // Current .NET version that Xenko uses.
         public static bool TryDequeue<T>(this Queue<T> queue, out T result)
         {
             try

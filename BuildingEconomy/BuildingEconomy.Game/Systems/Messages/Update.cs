@@ -4,11 +4,11 @@ namespace BuildingEconomy.Systems.Messages
 {
     public class Update
     {
-        public GameTime UpdateTime { get; }
-
         public Update(GameTime updateTime)
         {
             UpdateTime = updateTime;
         }
+
+        public GameTime UpdateTime { get; }
     }
 }

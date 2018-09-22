@@ -7,20 +7,22 @@ using Xenko.Input;
 namespace BuildingEconomy
 {
     /// <summary>
-    /// A script that allows to move and rotate an entity through keyboard, mouse and touch input to provide basic camera navigation.
+    ///     A script that allows to move and rotate an entity through keyboard, mouse and touch input to provide basic camera
+    ///     navigation.
     /// </summary>
     /// <remarks>
-    /// The entity can be moved using W, A, S, D, Q and E, arrow keys or dragging/scaling using multi-touch.
-    /// Rotation is achieved using the Numpad, the mouse while holding the right mouse button, or dragging using single-touch.
+    ///     The entity can be moved using W, A, S, D, Q and E, arrow keys or dragging/scaling using multi-touch.
+    ///     Rotation is achieved using the NumPad, the mouse while holding the right mouse button, or dragging using
+    ///     single-touch.
     /// </remarks>
     public class BasicCameraController : SyncScript
     {
         private const float MaximumPitch = MathUtil.PiOverTwo * 0.99f;
+        private float pitch;
+        private Vector3 translation;
 
         private Vector3 upVector;
-        private Vector3 translation;
         private float yaw;
-        private float pitch;
 
         public Vector3 KeyboardMovementSpeed { get; set; } = new Vector3(5.0f);
 
@@ -155,7 +157,7 @@ namespace BuildingEconomy
 
         private void UpdateTransform()
         {
-            float elapsedTime = (float)Game.UpdateTime.Elapsed.TotalSeconds;
+            var elapsedTime = (float)Game.UpdateTime.Elapsed.TotalSeconds;
 
             translation *= elapsedTime;
             yaw *= elapsedTime;
@@ -173,7 +175,7 @@ namespace BuildingEconomy
             up.Normalize();
 
             // Adjust pitch. Prevent it from exceeding up and down facing. Stabilize edge cases.
-            float currentPitch = MathUtil.PiOverTwo - (float)Math.Acos(Vector3.Dot(rotation.Forward, upVector));
+            var currentPitch = MathUtil.PiOverTwo - (float)Math.Acos(Vector3.Dot(rotation.Forward, upVector));
             pitch = MathUtil.Clamp(currentPitch + pitch, -MaximumPitch, MaximumPitch) - currentPitch;
 
             // Move in local coordinates

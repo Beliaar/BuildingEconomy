@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using BuildingEconomy.Systems.Interfaces;
 using BuildingEconomy.Systems.Messages;
+using BuildingEconomy.Systems.Orders.Interfaces;
 using BuildingEconomy.Utils;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace BuildingEconomy.Systems.Actors
 {
     public class EntityActor : ReceiveActor
     {
-        private readonly Entity entity;
         private readonly IComponentActorFactory componentActorFactory;
-        private Queue<Orders.Interfaces.IOrder> orderQueue = new Queue<Orders.Interfaces.IOrder>();
-        private Orders.Interfaces.IOrder currentOrder = null;
+        private readonly Entity entity;
+        private IOrder currentOrder;
+        private readonly Queue<IOrder> orderQueue = new Queue<IOrder>();
 
         public EntityActor(Entity entity, IComponentActorFactory componentActorFactory)
         {
@@ -54,6 +55,7 @@ namespace BuildingEconomy.Systems.Actors
             {
                 currentOrder = null;
             }
+
             if (currentOrder is null)
             {
                 if (!orderQueue.TryDequeue(out currentOrder))
@@ -61,17 +63,18 @@ namespace BuildingEconomy.Systems.Actors
                     currentOrder = null;
                 }
             }
+
             if (!currentOrder?.IsValid(entity) ?? false)
             {
                 Context.Parent.Tell(new InvalidOrder(entity.Id, currentOrder));
                 currentOrder = null;
             }
+
             currentOrder?.Update(entity, message.UpdateTime);
             foreach (EntityComponent entityComponent in entity)
             {
                 componentActorFactory.GetOrCreateActorForComponent(entityComponent)?.Forward(message);
             }
         }
-
     }
 }

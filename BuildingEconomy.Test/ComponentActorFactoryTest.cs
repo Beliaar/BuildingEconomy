@@ -20,7 +20,6 @@ namespace BuildingEconomy.Test
         {
             var mockComponentActorFactory = new Mock<ComponentActorFactory<Utils.TestComponent>>(Sys);
             mockComponentActorFactory.Setup(f => f.GetProps(It.IsAny<Utils.TestComponent>())).Returns(Props.Create(() => new FactoryTestActor()));
-            var mockActorContext = new Mock<IActorContext>();
             var mockComponent = new Mock<EntityComponent>();
 
             IComponentActorFactory componentActorFactory = mockComponentActorFactory.Object;

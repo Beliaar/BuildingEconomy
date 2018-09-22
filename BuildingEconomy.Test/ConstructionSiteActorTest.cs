@@ -5,12 +5,14 @@ using BuildingEconomy.Systems.Construction.Messages;
 using BuildingEconomy.Systems.Messages;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xenko.Engine;
 using Xunit;
 
 namespace BuildingEconomy.Test
 {
+    [SuppressMessage("ReSharper", "SuggestVarOrType_SimpleTypes")]
     public class ConstructionComponentActorTest : TestKit
     {
 
@@ -22,20 +24,12 @@ namespace BuildingEconomy.Test
         {
             var building = new Building()
             {
-                Name = "Test",
-                Stages =
-                {
-                }
+                Name = "Test"
             };
 
             var siteComponent = new Components.ConstructionSite()
             {
                 Building = "Test",
-            };
-
-            var testEntity = new Entity("Test")
-            {
-                siteComponent
             };
 
             var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
@@ -57,20 +51,12 @@ namespace BuildingEconomy.Test
         {
             var building = new Building()
             {
-                Name = "Test",
-                Stages =
-                {
-                }
+                Name = "Test"
             };
 
             var siteComponent = new Components.ConstructionSite()
             {
                 Building = "Test",
-            };
-
-            var testEntity = new Entity("Test")
-            {
-                siteComponent
             };
 
             var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
@@ -102,7 +88,7 @@ namespace BuildingEconomy.Test
                 {
                     new Building.Stage()
                     {
-                        NeededRessources = new Dictionary<string, int>
+                        NeededResources = new Dictionary<string, int>
                         {
                             { "Wood", 2 }
                         },
@@ -131,7 +117,7 @@ namespace BuildingEconomy.Test
             Assert.Equal(0f, siteComponent.CurrentStageProgress);
             Components.Storage storage = testEntity.Get<Components.Storage>();
             Building.Stage curStage = building.Stages[siteComponent.CurrentStage - 1];
-            foreach (KeyValuePair<string, int> pair in curStage.NeededRessources)
+            foreach (KeyValuePair<string, int> pair in curStage.NeededResources)
             {
                 Assert.Equal(pair.Value, storage.RequestedItems[pair.Key]);
                 storage.Items[pair.Key] = pair.Value;
@@ -142,7 +128,7 @@ namespace BuildingEconomy.Test
             ExpectNoMsg(100);
             Assert.NotEqual(0f, siteComponent.CurrentStageProgress);
             Assert.True(siteComponent.CurrentStageProgress < 1f);
-            foreach (int _ in Enumerable.Range(0, curStage.Steps))
+            foreach (var _ in Enumerable.Range(0, curStage.Steps))
             {
                 componentActor.Tell(new AdvanceProgress());
             }
@@ -165,7 +151,7 @@ namespace BuildingEconomy.Test
                 {
                     new Building.Stage()
                     {
-                        NeededRessources = new Dictionary<string, int>
+                        NeededResources = new Dictionary<string, int>
                         {
                             { "Wood", 2 }
                         },
@@ -173,7 +159,7 @@ namespace BuildingEconomy.Test
                     },
                     new Building.Stage()
                     {
-                        NeededRessources = new Dictionary<string, int>
+                        NeededResources = new Dictionary<string, int>
                         {
                             { "Wood", 2 },
                             { "Stone", 1 }
@@ -201,14 +187,14 @@ namespace BuildingEconomy.Test
             ExpectMsg<WaitingForResources>();
             Components.Storage storage = testEntity.Get<Components.Storage>();
             Building.Stage curStage = building.Stages[siteComponent.CurrentStage - 1];
-            foreach (KeyValuePair<string, int> pair in curStage.NeededRessources)
+            foreach (KeyValuePair<string, int> pair in curStage.NeededResources)
             {
                 Assert.Equal(pair.Value, storage.RequestedItems[pair.Key]);
                 storage.Items[pair.Key] = pair.Value;
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
-            foreach (int _ in Enumerable.Range(0, curStage.Steps))
+            foreach (var _ in Enumerable.Range(0, curStage.Steps))
             {
                 componentActor.Tell(new AdvanceProgress());
             }
@@ -223,7 +209,7 @@ namespace BuildingEconomy.Test
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
-            foreach (int _ in Enumerable.Range(0, curStage.Steps))
+            foreach (var _ in Enumerable.Range(0, curStage.Steps))
             {
                 componentActor.Tell(new AdvanceProgress());
             }
@@ -244,7 +230,7 @@ namespace BuildingEconomy.Test
                 {
                     new Building.Stage()
                     {
-                        NeededRessources = new Dictionary<string, int>
+                        NeededResources = new Dictionary<string, int>
                         {
                             { "Wood", 2 }
                         },
@@ -252,7 +238,7 @@ namespace BuildingEconomy.Test
                     },
                     new Building.Stage()
                     {
-                        NeededRessources = new Dictionary<string, int>
+                        NeededResources = new Dictionary<string, int>
                         {
                             { "Wood", 2 },
                             { "Stone", 1 }
@@ -280,7 +266,6 @@ namespace BuildingEconomy.Test
             ExpectMsg<WaitingForResources>();
             Components.Storage storage = testEntity.Get<Components.Storage>();
             Building.Stage curStage = building.Stages[siteComponent.CurrentStage - 1];
-            curStage = building.Stages[siteComponent.CurrentStage - 1];
             foreach (KeyValuePair<string, int> pair in storage.RequestedItems)
             {
                 storage.Items[pair.Key] = pair.Value;
@@ -297,14 +282,14 @@ namespace BuildingEconomy.Test
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
-            foreach (int _ in Enumerable.Range(0, curStage.Steps))
+            foreach (var _ in Enumerable.Range(0, curStage.Steps))
             {
                 componentActor.Tell(new AdvanceProgress());
             }
             componentActor.Tell(new Update(new Xenko.Games.GameTime(minTimeBetweenUpdate, minTimeBetweenUpdate)));
             ExpectMsg<BuilderNeeded>();
             curStage = building.Stages[siteComponent.CurrentStage - 1];
-            foreach (int _ in Enumerable.Range(0, curStage.Steps))
+            foreach (var _ in Enumerable.Range(0, curStage.Steps))
             {
                 componentActor.Tell(new AdvanceProgress());
             }

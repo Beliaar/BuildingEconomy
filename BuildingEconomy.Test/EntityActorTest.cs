@@ -93,11 +93,7 @@ namespace BuildingEconomy.Test
             mockOrder.Setup(o => o.IsValid(It.IsAny<Entity>())).Returns(false);
             var entity = new Entity();
             var mockComponentActorFactory = new Mock<IComponentActorFactory>();
-            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>())).Returns((EntityComponent component) =>
-                {
-                    return ActorRefs.Nobody;
-                }
-            );
+            mockComponentActorFactory.Setup(f => f.GetOrCreateActorForComponent(It.IsAny<EntityComponent>())).Returns((EntityComponent component) => ActorRefs.Nobody);
 
             IActorRef entityActor = ActorOfAsTestActorRef<EntityActor>(EntityActor.Props(entity, mockComponentActorFactory.Object), TestActor);
 
