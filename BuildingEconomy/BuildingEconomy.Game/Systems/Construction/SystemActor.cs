@@ -30,17 +30,13 @@ namespace BuildingEconomy.Systems.Construction
             return Akka.Actor.Props.Create(() => new SystemActor(system));
         }
 
-
-        public override void HandleStep(Update message)
-        {
-        }
-
-        public void HandleConstructionFinished(ConstructionFinished message)
+        protected void HandleConstructionFinished(ConstructionFinished message)
         {
             Entity entity = System.EntityManager.SingleOrDefault(e => e.Id == message.EntityId);
             if (entity is null)
             {
                 // TODO: Log error/warning.
+                Sender.Tell(new CouldNotProcessMessage(message, CouldNotProcessMessage.EntityNotFound));
                 return;
             }
             entity.RemoveAll<ConstructionSite>();

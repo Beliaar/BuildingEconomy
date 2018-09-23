@@ -20,12 +20,7 @@ namespace BuildingEconomy.Systems
 
         public Building GetBuilding(string name)
         {
-            if (buildings.ContainsKey(name))
-            {
-                return buildings[name];
-            }
-
-            return null;
+            return buildings.ContainsKey(name) ? buildings[name] : null;
         }
 
         public override void Initialize()

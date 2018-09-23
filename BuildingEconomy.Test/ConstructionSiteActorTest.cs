@@ -5,14 +5,12 @@ using BuildingEconomy.Systems.Construction.Messages;
 using BuildingEconomy.Systems.Messages;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xenko.Engine;
 using Xunit;
 
 namespace BuildingEconomy.Test
 {
-    [SuppressMessage("ReSharper", "SuggestVarOrType_SimpleTypes")]
     public class ConstructionComponentActorTest : TestKit
     {
 
@@ -32,6 +30,7 @@ namespace BuildingEconomy.Test
                 Building = "Test",
             };
 
+            // ReSharper disable once SuggestVarOrType_SimpleTypes
             var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
             IActorRef componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
@@ -59,6 +58,7 @@ namespace BuildingEconomy.Test
                 Building = "Test",
             };
 
+            // ReSharper disable once SuggestVarOrType_SimpleTypes
             var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
             IActorRef componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
@@ -107,6 +107,7 @@ namespace BuildingEconomy.Test
                 siteComponent
             };
 
+            // ReSharper disable once SuggestVarOrType_SimpleTypes
             var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
             IActorRef componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");
@@ -258,6 +259,7 @@ namespace BuildingEconomy.Test
                 siteComponent
             };
 
+            // ReSharper disable once SuggestVarOrType_SimpleTypes
             var minTimeBetweenUpdate = TimeSpan.FromSeconds(ConstructionSiteActor.SecondsBetweenUpdate);
 
             IActorRef componentActor = Sys.ActorOf(ConstructionSiteActor.Props(siteComponent, building), "TestSiteActor");

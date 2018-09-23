@@ -6,6 +6,7 @@ using BuildingEconomy.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using Xenko.Engine;
+using Xenko.Games;
 
 namespace BuildingEconomy.Systems.Actors
 {
@@ -29,18 +30,12 @@ namespace BuildingEconomy.Systems.Actors
                     currentOrder = null;
                 }
             );
-            //Should be last IMessageToEntity* since akka.NET takes the first match in the order they were added.
-            Receive<IMessageToEntity>(msg => HandleMessageToEntity(msg));
             ReceiveAny(msg => Context.Parent.Forward(msg));
         }
 
         public static Props Props(Entity entity, IComponentActorFactory componentActorFactory)
         {
             return Akka.Actor.Props.Create(() => new EntityActor(entity, componentActorFactory));
-        }
-
-        private void HandleMessageToEntity(IMessageToEntity message)
-        {
         }
 
         private void HandleMessageToEntityComponent(IMessageToEntityComponentFirstOfType message)
@@ -50,6 +45,15 @@ namespace BuildingEconomy.Systems.Actors
         }
 
         private void HandleUpdate(Update message)
+        {
+            UpdateOrder(message.UpdateTime);
+            foreach (EntityComponent entityComponent in entity)
+            {
+                componentActorFactory.GetOrCreateActorForComponent(entityComponent)?.Forward(message);
+            }
+        }
+
+        private void UpdateOrder(GameTime updateTime)
         {
             if (currentOrder?.IsComplete(entity) ?? false)
             {
@@ -70,11 +74,7 @@ namespace BuildingEconomy.Systems.Actors
                 currentOrder = null;
             }
 
-            currentOrder?.Update(entity, message.UpdateTime);
-            foreach (EntityComponent entityComponent in entity)
-            {
-                componentActorFactory.GetOrCreateActorForComponent(entityComponent)?.Forward(message);
-            }
+            currentOrder?.Update(entity, updateTime);
         }
     }
 }
