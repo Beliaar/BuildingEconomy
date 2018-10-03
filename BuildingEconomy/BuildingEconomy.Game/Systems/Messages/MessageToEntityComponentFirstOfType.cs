@@ -3,9 +3,10 @@ using Xenko.Engine;
 
 namespace BuildingEconomy.Systems.Messages
 {
-    public abstract class MessageToEntityComponent<T> : IMessageToEntityComponentFirstOfType where T : EntityComponent
+    public abstract class MessageToEntityComponentFirstOfType<T> : IMessageToEntityComponentFirstOfType
+        where T : EntityComponent
     {
-        protected MessageToEntityComponent(Guid entityId, object message)
+        protected MessageToEntityComponentFirstOfType(Guid entityId, object message)
         {
             EntityId = entityId;
             Message = message;
