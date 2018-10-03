@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using Xenko.Engine;
 
 namespace BuildingEconomy.Components
 {
@@ -7,13 +6,8 @@ namespace BuildingEconomy.Components
     /// <summary>
     ///     Working data of a storage.
     /// </summary>
-    public class Storage : EntityComponent
+    public class Storage : ResourceContainer
     {
-        /// <summary>
-        ///     The list of stored items.
-        /// </summary>
-        public ConcurrentDictionary<string, int> Items { get; } = new ConcurrentDictionary<string, int>();
-
         /// <summary>
         ///     Items requested to be moved to this storage.
         /// </summary>
