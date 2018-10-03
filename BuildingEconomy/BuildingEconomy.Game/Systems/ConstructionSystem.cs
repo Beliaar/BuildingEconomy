@@ -1,7 +1,7 @@
-﻿using Akka.Actor;
+﻿using System.Collections.Generic;
+using Akka.Actor;
 using BuildingEconomy.Systems.Construction;
 using BuildingEconomy.Systems.Construction.Interfaces;
-using System.Collections.Generic;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems
@@ -23,9 +23,7 @@ namespace BuildingEconomy.Systems
             return buildings.ContainsKey(name) ? buildings[name] : null;
         }
 
-        public override void Initialize()
-        {
-        }
+        public override void Initialize() { }
 
         public void AddBuilding(Building building)
         {

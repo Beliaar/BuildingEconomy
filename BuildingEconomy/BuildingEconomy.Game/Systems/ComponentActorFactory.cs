@@ -1,6 +1,6 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using BuildingEconomy.Systems.Interfaces;
-using System;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems

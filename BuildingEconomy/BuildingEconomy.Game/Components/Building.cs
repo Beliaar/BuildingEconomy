@@ -2,6 +2,7 @@
 
 namespace BuildingEconomy.Components
 {
+    /// <inheritdoc />
     /// <summary>
     ///     Working data of a building.
     /// </summary>

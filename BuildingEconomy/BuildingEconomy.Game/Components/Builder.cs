@@ -2,7 +2,5 @@
 
 namespace BuildingEconomy.Components
 {
-    public class Builder : EntityComponent
-    {
-    }
+    public class Builder : EntityComponent { }
 }

@@ -18,8 +18,6 @@ namespace BuildingEconomy.Systems
             Receive<Update>(message => HandleStep(message));
         }
 
-        protected virtual void HandleStep(Update message)
-        {
-        }
+        protected virtual void HandleStep(Update message) { }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace BuildingEconomy.Components
 {
+    /// <inheritdoc />
     /// <summary>
     ///     Working data for a construction site.
     /// </summary>

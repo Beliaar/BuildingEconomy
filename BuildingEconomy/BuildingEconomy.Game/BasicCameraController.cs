@@ -6,6 +6,7 @@ using Xenko.Input;
 
 namespace BuildingEconomy
 {
+    /// <inheritdoc />
     /// <summary>
     ///     A script that allows to move and rotate an entity through keyboard, mouse and touch input to provide basic camera
     ///     navigation.
@@ -138,7 +139,7 @@ namespace BuildingEconomy
                 {
                     // Rotate by dragging
                     case GestureType.Drag:
-                        var drag = (GestureEventDrag)gestureEvent;
+                        var drag = (GestureEventDrag) gestureEvent;
                         Vector2 dragDistance = drag.DeltaTranslation;
                         yaw = -dragDistance.X * TouchRotationSpeed.X;
                         pitch = -dragDistance.Y * TouchRotationSpeed.Y;
@@ -146,10 +147,10 @@ namespace BuildingEconomy
 
                     // Move along z-axis by scaling and in xy-plane by multi-touch dragging
                     case GestureType.Composite:
-                        var composite = (GestureEventComposite)gestureEvent;
+                        var composite = (GestureEventComposite) gestureEvent;
                         translation.X = -composite.DeltaTranslation.X * TouchMovementSpeed.X;
                         translation.Y = -composite.DeltaTranslation.Y * TouchMovementSpeed.Y;
-                        translation.Z = -(float)Math.Log(composite.DeltaScale + 1) * TouchMovementSpeed.Z;
+                        translation.Z = -(float) Math.Log(composite.DeltaScale + 1) * TouchMovementSpeed.Z;
                         break;
                 }
             }
@@ -157,25 +158,25 @@ namespace BuildingEconomy
 
         private void UpdateTransform()
         {
-            var elapsedTime = (float)Game.UpdateTime.Elapsed.TotalSeconds;
+            var elapsedTime = (float) Game.UpdateTime.Elapsed.TotalSeconds;
 
             translation *= elapsedTime;
             yaw *= elapsedTime;
             pitch *= elapsedTime;
 
             // Get the local coordinate system
-            var rotation = Matrix.RotationQuaternion(Entity.Transform.Rotation);
+            Matrix rotation = Matrix.RotationQuaternion(Entity.Transform.Rotation);
 
             // Enforce the global up-vector by adjusting the local x-axis
-            var right = Vector3.Cross(rotation.Forward, upVector);
-            var up = Vector3.Cross(right, rotation.Forward);
+            Vector3 right = Vector3.Cross(rotation.Forward, upVector);
+            Vector3 up = Vector3.Cross(right, rotation.Forward);
 
             // Stabilize
             right.Normalize();
             up.Normalize();
 
             // Adjust pitch. Prevent it from exceeding up and down facing. Stabilize edge cases.
-            var currentPitch = MathUtil.PiOverTwo - (float)Math.Acos(Vector3.Dot(rotation.Forward, upVector));
+            float currentPitch = MathUtil.PiOverTwo - (float) Math.Acos(Vector3.Dot(rotation.Forward, upVector));
             pitch = MathUtil.Clamp(currentPitch + pitch, -MaximumPitch, MaximumPitch) - currentPitch;
 
             // Move in local coordinates

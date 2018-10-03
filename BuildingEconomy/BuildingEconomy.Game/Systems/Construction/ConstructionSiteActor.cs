@@ -1,10 +1,11 @@
-﻿using Akka.Actor;
+﻿using System;
+using System.Collections.Generic;
+using Akka.Actor;
 using BuildingEconomy.Components;
 using BuildingEconomy.Systems.Actors;
 using BuildingEconomy.Systems.Construction.Messages;
 using BuildingEconomy.Systems.Messages;
-using System;
-using System.Collections.Generic;
+using Xenko.Engine;
 using Xenko.Games;
 
 namespace BuildingEconomy.Systems.Construction
@@ -108,9 +109,9 @@ namespace BuildingEconomy.Systems.Construction
 
         protected void SetNeededResources()
         {
-            Storage storage = ConstructionSite.Entity.Get<Storage>();
+            var storage = ConstructionSite.Entity.Get<Storage>();
             var neededResources = new Dictionary<string, int>();
-            var nextStageIndex = ConstructionSite.CurrentStage - 1;
+            int nextStageIndex = ConstructionSite.CurrentStage - 1;
             var hasResourcesForCurrentStage = true;
             var hasResourcesForAllStages = false;
             while (hasResourcesForCurrentStage && !hasResourcesForAllStages)
@@ -195,11 +196,11 @@ namespace BuildingEconomy.Systems.Construction
 
         private bool HasNeededResourcesForStage(Building.Stage stage)
         {
-            Xenko.Engine.Entity entity = ConstructionSite.Entity;
-            Storage storage = entity.Components.Get<Storage>();
-            foreach (var resource in stage.NeededResources.Keys)
-            {
+            Entity entity = ConstructionSite.Entity;
+            var storage = entity.Components.Get<Storage>();
+            foreach (string resource in stage.NeededResources.Keys)
                 // Check if all resources are at or higher than the needed level.
+            {
                 if (!storage.Items.ContainsKey(resource) || storage.Items[resource] < stage.NeededResources[resource])
                 {
                     return false;

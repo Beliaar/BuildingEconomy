@@ -34,6 +34,7 @@ namespace BuildingEconomy.Systems.Orders
             {
                 return;
             }
+
             // TODO: Move to entity if not near.
             IActorRef targetActor = componentActorFactory.GetOrCreateActorForComponent(target);
 

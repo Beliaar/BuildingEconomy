@@ -1,17 +1,15 @@
-﻿using Akka.Actor;
+﻿using System.Linq;
+using Akka.Actor;
 using BuildingEconomy.Components;
 using BuildingEconomy.Systems.Construction.Messages;
 using BuildingEconomy.Systems.Messages;
-using System.Linq;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Systems.Construction
 {
     public class SystemActor : BasicSystemActor<ConstructionSystem>
     {
-        public SystemActor(ConstructionSystem system) : base(system)
-        {
-        }
+        public SystemActor(ConstructionSystem system) : base(system) { }
 
         protected override void Default()
         {
@@ -39,6 +37,7 @@ namespace BuildingEconomy.Systems.Construction
                 Sender.Tell(new CouldNotProcessMessage(message, CouldNotProcessMessage.EntityNotFound));
                 return;
             }
+
             entity.RemoveAll<ConstructionSite>();
             var building = new Components.Building
             {

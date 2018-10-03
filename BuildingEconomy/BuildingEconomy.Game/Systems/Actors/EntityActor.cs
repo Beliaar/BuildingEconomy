@@ -1,10 +1,10 @@
-﻿using Akka.Actor;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Akka.Actor;
 using BuildingEconomy.Systems.Interfaces;
 using BuildingEconomy.Systems.Messages;
 using BuildingEconomy.Systems.Orders.Interfaces;
 using BuildingEconomy.Utils;
-using System.Collections.Generic;
-using System.Linq;
 using Xenko.Engine;
 using Xenko.Games;
 
@@ -14,8 +14,8 @@ namespace BuildingEconomy.Systems.Actors
     {
         private readonly IComponentActorFactory componentActorFactory;
         private readonly Entity entity;
-        private IOrder currentOrder;
         private readonly Queue<IOrder> orderQueue = new Queue<IOrder>();
+        private IOrder currentOrder;
 
         public EntityActor(Entity entity, IComponentActorFactory componentActorFactory)
         {
