@@ -11,4 +11,7 @@
       <PrivateAssets>contentfiles;analyzers</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Systems\Orders\Messages\" />
+  </ItemGroup>
 </Project>

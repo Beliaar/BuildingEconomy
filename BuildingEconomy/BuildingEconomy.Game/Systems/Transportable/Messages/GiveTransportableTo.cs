@@ -1,6 +1,6 @@
 ﻿using BuildingEconomy.Components;
 
-namespace BuildingEconomy.Systems.Orders.Messages
+namespace BuildingEconomy.Systems.Transportable.Messages
 {
     public class GiveTransportableTo
     {

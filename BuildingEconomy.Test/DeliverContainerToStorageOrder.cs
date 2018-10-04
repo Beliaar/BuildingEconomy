@@ -6,7 +6,7 @@ using BuildingEconomy.Components;
 using BuildingEconomy.Systems;
 using BuildingEconomy.Systems.Messages;
 using BuildingEconomy.Systems.Orders;
-using BuildingEconomy.Systems.Orders.Messages;
+using BuildingEconomy.Systems.Transportable.Messages;
 using Moq;
 using Xenko.Engine;
 using Xenko.Games;
