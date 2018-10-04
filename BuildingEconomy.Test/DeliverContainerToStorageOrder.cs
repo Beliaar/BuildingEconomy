@@ -66,7 +66,7 @@ namespace BuildingEconomy.Test
             var messageToEntityComponent = ExpectMsg<MessageToEntityComponentFirstOfType<TransportableStorage>>();
             Assert.Equal(transporterEntity.Id, messageToEntityComponent.EntityId);
             var giveTransportableTo = Assert.IsType<GiveTransportableTo>(messageToEntityComponent.Message);
-            Assert.Equal(resourceContainer.Id, giveTransportableTo.TransportableId);
+            Assert.Equal(resourceContainer.Id, giveTransportableTo.Transportable.Id);
             Assert.Equal(orderTargetTransportable.Id, giveTransportableTo.Target.Id);
         }
 
@@ -111,7 +111,7 @@ namespace BuildingEconomy.Test
             var messageToEntityComponent = ExpectMsg<MessageToEntityComponentFirstOfType<TransportableStorage>>();
             Assert.Equal(sourceEntity.Id, messageToEntityComponent.EntityId);
             var giveTransportableTo = Assert.IsType<GiveTransportableTo>(messageToEntityComponent.Message);
-            Assert.Equal(resourceContainer.Id, giveTransportableTo.TransportableId);
+            Assert.Equal(resourceContainer.Id, giveTransportableTo.Transportable.Id);
             Assert.Equal(transporterStorage.Id, giveTransportableTo.Target.Id);
         }
 

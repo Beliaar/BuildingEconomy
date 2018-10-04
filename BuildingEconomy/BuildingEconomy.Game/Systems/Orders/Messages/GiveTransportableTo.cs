@@ -1,17 +1,16 @@
-﻿using System;
-using BuildingEconomy.Components;
+﻿using BuildingEconomy.Components;
 
 namespace BuildingEconomy.Systems.Orders.Messages
 {
     public class GiveTransportableTo
     {
-        public GiveTransportableTo(Guid transportableId, TransportableStorage target)
+        public GiveTransportableTo(Transportable transportable, TransportableStorage target)
         {
-            TransportableId = transportableId;
+            Transportable = transportable;
             Target = target;
         }
 
-        public Guid TransportableId { get; }
+        public Transportable Transportable { get; }
         public TransportableStorage Target { get; }
     }
 }
