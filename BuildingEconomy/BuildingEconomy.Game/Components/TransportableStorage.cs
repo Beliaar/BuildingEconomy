@@ -16,11 +16,11 @@ namespace BuildingEconomy.Components
         /// <remarks>
         ///     A value of 0 means unlimited.
         /// </remarks>
-        public uint Capacity;
+        public uint Capacity { get; set; }
 
         /// <summary>
         ///     The ids of the transportables this storage contains.
         /// </summary>
-        public List<Guid> TransportableIds;
+        public List<Guid> TransportableIds { get; } = new List<Guid>();
     }
 }

@@ -53,7 +53,7 @@ namespace BuildingEconomy.Test
             {
                 new TransportableStorage
                 {
-                    TransportableIds = new List<Guid>
+                    TransportableIds =
                     {
                         resourceContainer.Id
                     }
