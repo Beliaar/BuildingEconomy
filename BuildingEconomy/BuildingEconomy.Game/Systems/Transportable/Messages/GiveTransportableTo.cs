@@ -1,10 +1,12 @@
 ﻿using BuildingEconomy.Components;
+using JetBrains.Annotations;
 
 namespace BuildingEconomy.Systems.Transportable.Messages
 {
     public class GiveTransportableTo
     {
-        public GiveTransportableTo(Components.Transportable transportable, TransportableStorage target)
+        public GiveTransportableTo([NotNull] Components.Transportable transportable,
+            [NotNull] TransportableStorage target)
         {
             Transportable = transportable;
             Target = target;
