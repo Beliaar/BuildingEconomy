@@ -21,7 +21,8 @@ namespace BuildingEconomy.Test
             GivenTransportableExists();
             GivenSourceStorageExists();
             GivenTransportableInSourceStorage();
-            TellMessageToSourceStorage(new GiveTransportableTo(transportable, targetStorage));
+            GivenTargetStorageExists();
+            TellMessageToStorage(new GiveTransportableTo(transportable, targetStorage), sourceStorage);
             ExpectNoMsg(100);
             Assert.Equal(targetStorage.Id, transportable.TransporterId);
             Assert.Contains(transportable.Id, targetStorage.TransportableIds);
@@ -33,9 +34,8 @@ namespace BuildingEconomy.Test
         {
             GivenTransportableExists();
             GivenSourceStorageExists();
-            GivenTransportableInSourceStorage();
             GivenTargetStorageExists();
-            TellMessageToSourceStorage(new GiveTransportableTo(transportable, targetStorage));
+            TellMessageToStorage(new GiveTransportableTo(transportable, targetStorage), sourceStorage);
             ExpectMsg<CouldNotProcessMessage>(message =>
                 message.Reason == TransportableStorageActor.NotContainingTransportable);
         }
@@ -49,7 +49,7 @@ namespace BuildingEconomy.Test
             GivenTargetStorageExists();
             GivenStorageHasCapacity(targetStorage, 1);
             GivenTransportablesInStorage(new List<Transportable> {CreateBareTransportable()}, targetStorage);
-            TellMessageToSourceStorage(new GiveTransportableTo(transportable, targetStorage));
+            TellMessageToStorage(new GiveTransportableTo(transportable, targetStorage), sourceStorage);
             ExpectMsg<CouldNotProcessMessage>(message =>
                 message.Reason == TransportableStorageActor.NotEnoughCapacity);
         }
@@ -64,9 +64,9 @@ namespace BuildingEconomy.Test
             return new Transportable();
         }
 
-        private void TellMessageToSourceStorage(GiveTransportableTo message)
+        private void TellMessageToStorage(GiveTransportableTo message, TransportableStorage storage)
         {
-            SetupTransportableStorageActor(sourceStorage).Tell(message);
+            SetupTransportableStorageActor(storage).Tell(message);
         }
 
         private void GivenTransportableInSourceStorage()
@@ -74,7 +74,7 @@ namespace BuildingEconomy.Test
             GivenTransportablesInStorage(new List<Transportable> {transportable}, sourceStorage);
         }
 
-        private void GivenTargetStorageExists(uint capacity = 0)
+        private void GivenTargetStorageExists()
         {
             targetStorage = CreateEmptyStorage();
         }
