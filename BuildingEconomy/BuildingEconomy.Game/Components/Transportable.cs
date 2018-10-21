@@ -1,5 +1,4 @@
-﻿using System;
-using Xenko.Engine;
+﻿using Xenko.Engine;
 
 namespace BuildingEconomy.Components
 {
@@ -9,6 +8,6 @@ namespace BuildingEconomy.Components
     /// </summary>
     public class Transportable : EntityComponent
     {
-        public Guid TransporterId { get; set; }
+        public TransportableStorage Transporter { get; set; }
     }
 }

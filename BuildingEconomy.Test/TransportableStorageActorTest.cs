@@ -24,9 +24,9 @@ namespace BuildingEconomy.Test
             GivenTargetStorageExists();
             TellMessageToStorage(new GiveTransportableTo(transportable, targetStorage), sourceStorage);
             ExpectNoMsg(100);
-            Assert.Equal(targetStorage.Id, transportable.TransporterId);
-            Assert.Contains(transportable.Id, targetStorage.TransportableIds);
-            Assert.DoesNotContain(transportable.Id, sourceStorage.TransportableIds);
+            Assert.Equal(targetStorage.Id, transportable.Transporter.Id);
+            Assert.Contains(transportable, targetStorage.Transportables);
+            Assert.DoesNotContain(transportable, sourceStorage.Transportables);
         }
 
         [Fact]
@@ -89,8 +89,8 @@ namespace BuildingEconomy.Test
         {
             foreach (Transportable transportable in transportables)
             {
-                storage.TransportableIds.Add(transportable.Id);
-                transportable.TransporterId = storage.Id;
+                storage.Transportables.Add(transportable);
+                transportable.Transporter = storage;
             }
         }
 

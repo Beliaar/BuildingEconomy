@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Xenko.Engine;
 
 namespace BuildingEconomy.Components
@@ -21,6 +20,6 @@ namespace BuildingEconomy.Components
         /// <summary>
         ///     The ids of the transportables this storage contains.
         /// </summary>
-        public List<Guid> TransportableIds { get; } = new List<Guid>();
+        public List<Transportable> Transportables { get; } = new List<Transportable>();
     }
 }

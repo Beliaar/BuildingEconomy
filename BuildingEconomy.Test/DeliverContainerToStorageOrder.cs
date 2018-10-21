@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Akka.Actor;
 using Akka.TestKit.Xunit2;
 using BuildingEconomy.Components;
@@ -44,6 +43,7 @@ namespace BuildingEconomy.Test
             mockComponentActorFactory.Setup(f => f.GetProps(It.IsAny<TransportableStorage>()))
                 .Returns(Props.Create(() => new EntityTestActor()));
             var resourceContainer = new ResourceContainer();
+            var containerTransportable = new Transportable();
             var orderTargetTransportable = new TransportableStorage();
             var orderTargetEntity = new Entity {orderTargetTransportable};
             var deliverOrder =
@@ -53,9 +53,9 @@ namespace BuildingEconomy.Test
             {
                 new TransportableStorage
                 {
-                    TransportableIds =
+                    Transportables =
                     {
-                        resourceContainer.Id
+                        containerTransportable
                     }
                 }
             };
@@ -87,6 +87,7 @@ namespace BuildingEconomy.Test
                 .Returns(Props.Create(() => new EntityTestActor()));
             var sourceEntity = new Entity();
             var resourceContainer = new ResourceContainer();
+            var sourceTransporter = new TransportableStorage();
 
             // TODO: Entity might not be needed
             var containerEntity = new Entity
@@ -94,7 +95,7 @@ namespace BuildingEconomy.Test
                 resourceContainer,
                 new Transportable
                 {
-                    TransporterId = sourceEntity.Id
+                    Transporter = sourceTransporter
                 }
             };
             var orderTargetTransportable = new TransportableStorage();

@@ -41,15 +41,15 @@ namespace BuildingEconomy.Systems.Transportable.Actors
                 return;
             }
 
-            targetStorage.TransportableIds.Add(transportable.Id);
-            transportable.TransporterId = targetStorage.Id;
-            Component.TransportableIds.Remove(transportable.Id);
+            targetStorage.Transportables.Add(transportable);
+            transportable.Transporter = targetStorage;
+            Component.Transportables.Remove(transportable);
         }
 
         private bool CheckCapacity(GiveTransportableTo message, TransportableStorage targetStorage)
         {
             bool limitedCapacity = targetStorage.Capacity > 0;
-            if (limitedCapacity && targetStorage.TransportableIds.Count >= targetStorage.Capacity)
+            if (limitedCapacity && targetStorage.Transportables.Count >= targetStorage.Capacity)
             {
                 Sender.Tell(new CouldNotProcessMessage(message, NotEnoughCapacity));
                 return false;
@@ -75,7 +75,7 @@ namespace BuildingEconomy.Systems.Transportable.Actors
 
         private bool CheckTransportable(GiveTransportableTo message)
         {
-            if (Component.TransportableIds.Contains(message.Transportable.Id))
+            if (Component.Transportables.Contains(message.Transportable))
             {
                 return true;
             }
